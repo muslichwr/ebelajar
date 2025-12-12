@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="/mod/ebelajar/db" VERSION="20241007" COMMENT="XMLDB file for ebelajar plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    
+    <TABLES>
+        <!-- Tabel aktivitas_kelompok -->
+        <TABLE NAME="ebelajar" COMMENT="Table for storing ebelajar plugin data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="case_study" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="step3_schedule_image" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="step3_schedule_file" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false"/>
+                <FIELD NAME="total_grup" TYPE="int" LENGTH="10"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="coursefk" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+                <KEY NAME="coursemodulefk" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- Tabel group student project -->
+        <TABLE NAME="groupproject" COMMENT="Table for storing group project data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="ebelajar" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="group_number" TYPE="char" LENGTH="255" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="ebelajarfk" TYPE="foreign" FIELDS="ebelajar" REFTABLE="ebelajar" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        
+        <!-- Tabel activity_report -->
+        <TABLE NAME="activity_report" COMMENT="Table for storing activity report data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="ebelajar" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="groupproject" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="name_activity" TYPE="char" LENGTH="255" NOTNULL="true"/>
+                <FIELD NAME="description_activity" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="feedback_teacher" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="date_activity" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="file_path" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userfk" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="ebelajarfk" TYPE="foreign" FIELDS="ebelajar" REFTABLE="ebelajar" REFFIELDS="id"/>
+                <KEY NAME="groupprojectfk" TYPE="foreign" FIELDS="groupproject" REFTABLE="groupproject" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- Tabel group student project -->
+        <TABLE NAME="groupstudentproject" COMMENT="Table for storing group student project data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="groupproject" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="ebelajar" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="name_student" TYPE="char" LENGTH="255" NOTNULL="true"/>
+                <FIELD NAME="jobdesk" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userfk" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="groupprojectfk" TYPE="foreign" FIELDS="groupproject" REFTABLE="groupproject" REFFIELDS="id"/>
+                <KEY NAME="ebelajarfk" TYPE="foreign" FIELDS="ebelajar" REFTABLE="ebelajar" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- Tabel project -->
+        <TABLE NAME="project" COMMENT="Table for storing project data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="group_project" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="ebelajar" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="step1_formulation" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="status_step1" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="step2_pondation" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="status_step2" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="status_step3" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="status_step4" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="title_project" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="description_project" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="file_path" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="status_step5" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="evaluation" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="status_step6" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Belum Selesai"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="group_projectfk" TYPE="foreign" FIELDS="group_project" REFTABLE="group_project" REFFIELDS="id"/>
+                <KEY NAME="ebelajarfk" TYPE="foreign" FIELDS="ebelajar" REFTABLE="ebelajar" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>
