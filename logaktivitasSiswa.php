@@ -1620,19 +1620,10 @@ $results2 = $DB->get_records_sql($query2, $params2);
       </div>
     </div>
 
-    <!-- ==================================================== -->
-    <!-- INLINE JAVASCRIPT FOR MODAL TAMBAH STEP1           -->
-    <!-- NO EXTERNAL DEPENDENCIES - ZERO LATENCY            -->
-    <!-- ==================================================== -->
     <script>
     (function() {
         'use strict';
         
-        console.log('[INLINE] modalTambahStep1 script loaded');
-        
-        // ========================================
-        // HTML TEMPLATE FOR NEW ROW
-        // ========================================
         function getRowTemplate(index) {
             return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
                 '<div class="d-flex justify-content-between align-items-start mb-2">' +
@@ -1652,9 +1643,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
             '</div>';
         }
 
-        // ========================================
-        // UPDATE ROW NUMBERS
-        // ========================================
         function updateRowNumbers() {
             var container = document.getElementById('indicator-container-add');
             var rows = container.querySelectorAll('.indicator-row');
@@ -1662,7 +1650,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 var badge = row.querySelector('.row-number');
                 badge.textContent = 'Indikator #' + (index + 1);
                 
-                // Show/hide delete button
                 var deleteBtn = row.querySelector('.btn-remove-indicator');
                 if (rows.length > 1) {
                     deleteBtn.style.display = '';
@@ -1672,11 +1659,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
             });
         }
 
-        // ========================================
-        // ADD ROW FUNCTION (Global Scope)
-        // ========================================
         window.addIndicatorRow = function() {
-            console.log('[INLINE] addIndicatorRow called');
             var container = document.getElementById('indicator-container-add');
             var currentRows = container.querySelectorAll('.indicator-row').length;
             var newIndex = currentRows + 1;
@@ -1684,21 +1667,14 @@ $results2 = $DB->get_records_sql($query2, $params2);
             container.insertAdjacentHTML('beforeend', getRowTemplate(newIndex));
             updateRowNumbers();
             
-            // Attach event listeners to the new delete button
             var newRow = container.lastElementChild;
             var deleteBtn = newRow.querySelector('.btn-remove-indicator');
             deleteBtn.addEventListener('click', function() {
                 removeIndicatorRow(this);
             });
-            
-            console.log('[INLINE] Row added. Total rows:', container.querySelectorAll('.indicator-row').length);
         };
 
-        // ========================================
-        // REMOVE ROW FUNCTION (Global Scope)
-        // ========================================
         function removeIndicatorRow(btn) {
-            console.log('[INLINE] removeIndicatorRow called');
             var container = document.getElementById('indicator-container-add');
             var rows = container.querySelectorAll('.indicator-row');
             
@@ -1706,15 +1682,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 var row = btn.closest('.indicator-row');
                 row.remove();
                 updateRowNumbers();
-                console.log('[INLINE] Row removed. Total rows:', container.querySelectorAll('.indicator-row').length);
-            } else {
-                console.log('[INLINE] Cannot delete last row');
             }
         }
 
-        // ========================================
-        // SERIALIZE TO JSON
-        // ========================================
         function serializeIndicators() {
             var indicators = [];
             var container = document.getElementById('indicator-container-add');
@@ -1734,43 +1704,26 @@ $results2 = $DB->get_records_sql($query2, $params2);
             return JSON.stringify(indicators);
         }
 
-        // ========================================
-        // INITIALIZE MODAL ON OPEN
-        // ========================================
         var modalElement = document.getElementById('modalTambahStep1');
         modalElement.addEventListener('shown.bs.modal', function() {
-            console.log('[INLINE] modalTambahStep1 opened');
-            
-            // Clear container and add one empty row
             var container = document.getElementById('indicator-container-add');
             container.innerHTML = '';
             addIndicatorRow();
         });
 
-        // ========================================
-        // ATTACH EVENT LISTENERS
-        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Add button click
             document.getElementById('btn-add-indicator-add').addEventListener('click', addIndicatorRow);
             
-            // Save button click - Serialize BEFORE form submission
             document.getElementById('btnSimpanStep1').addEventListener('click', function() {
-                console.log('[INLINE] Save button clicked');
-                
-                // Validate step1_formulation
                 var formulation = document.getElementById('step1_formulation_add').value;
                 if (!formulation || !formulation.trim()) {
                     alert('Harap lengkapi rumusan masalah.');
                     return;
                 }
                 
-                // Serialize indicators to JSON
                 var jsonPayload = serializeIndicators();
                 document.getElementById('analysis_data_add').value = jsonPayload;
-                console.log('[INLINE] Serialized JSON:', jsonPayload);
                 
-                // Submit via AJAX (matching the existing pattern)
                 var formData = new FormData(document.getElementById('formTambahDataStep1'));
                 
                 fetch('formtambahDataStep1.php', {
@@ -1781,7 +1734,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     return response.text();
                 })
                 .then(function(data) {
-                    console.log('[INLINE] Response:', data);
                     Swal.fire({
                         icon: 'success',
                         title: 'Data berhasil disimpan!',
@@ -1795,13 +1747,10 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     });
                 })
                 .catch(function(error) {
-                    console.error('[INLINE] Error:', error);
                     alert('Terjadi kesalahan saat menyimpan data.');
                 });
             });
         });
-        
-        console.log('[INLINE] modalTambahStep1 script initialized');
     })();
     </script>
 
@@ -1825,7 +1774,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 class="form-control shadow-sm rounded-lg p-3" 
                                 placeholder="Tambahkan Deskripsi Proyek" 
                                 style="color:#000000; border: 1px solid #000000;" 
-                                rows="4" required><?php echo $project_data->step1_formulation; ?></textarea>
+                                rows="4" required><?php echo isset($step->step1_formulation) ? $step->step1_formulation : ''; ?></textarea>
                         </div>
 
                         <!-- Orientasi Masalah (Problem Definition) -->
@@ -1835,7 +1784,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 class="form-control shadow-sm rounded-lg p-3" 
                                 placeholder="Jelaskan orientasi dan latar belakang masalah" 
                                 style="color:#000000; border: 1px solid #000000;" 
-                                rows="4"><?php echo isset($project_data->problem_definition) ? $project_data->problem_definition : ''; ?></textarea>
+                                rows="4"><?php echo isset($step->problem_definition) ? $step->problem_definition : ''; ?></textarea>
                         </div>
 
                         <!-- Analisis & Indikator (Visual Repeater - Edit) -->
@@ -1844,7 +1793,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <p class="text-muted small mb-2">Edit indikator penyebab masalah dan analisis Anda.</p>
                             
                             <!-- Hidden field for final JSON - ID must match JS -->
-                            <textarea name="analysis_data" id="hidden_analysis_data_edit" style="display:none;"><?php echo isset($project_data->analysis_data) ? htmlspecialchars($project_data->analysis_data) : ''; ?></textarea>
+                            <textarea name="analysis_data" id="hidden_analysis_data_edit" style="display:none;"><?php echo isset($step->analysis_data) ? htmlspecialchars($step->analysis_data) : ''; ?></textarea>
                             
                             <!-- Container for indicator rows - class must be .indicator-container -->
                             <div id="indicator-container-edit" class="indicator-container mb-3">
@@ -1869,20 +1818,10 @@ $results2 = $DB->get_records_sql($query2, $params2);
       </div>
     </div>
 
-
-    <!-- ==================================================== -->
-    <!-- INLINE JAVASCRIPT FOR MODAL EDIT STEP1             -->
-    <!-- NO EXTERNAL DEPENDENCIES - ZERO LATENCY            -->
-    <!-- ==================================================== -->
     <script>
     (function() {
         'use strict';
         
-        console.log('[INLINE-EDIT] modalEditStep1 script loaded');
-        
-        // ========================================
-        // HTML TEMPLATE FOR EDIT ROW
-        // ========================================
         function getEditRowTemplate(index) {
             return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
                 '<div class="d-flex justify-content-between align-items-start mb-2">' +
@@ -1902,9 +1841,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
             '</div>';
         }
 
-        // ========================================
-        // UPDATE ROW NUMBERS (EDIT)
-        // ========================================
         function updateEditRowNumbers() {
             var container = document.getElementById('indicator-container-edit');
             var rows = container.querySelectorAll('.indicator-row');
@@ -1912,7 +1848,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 var badge = row.querySelector('.row-number');
                 badge.textContent = 'Indikator #' + (index + 1);
                 
-                // Show/hide delete button
                 var deleteBtn = row.querySelector('.btn-remove-indicator-edit');
                 if (rows.length > 1) {
                     deleteBtn.style.display = '';
@@ -1922,11 +1857,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
             });
         }
 
-        // ========================================
-        // ADD ROW FUNCTION EDIT (Global Scope)
-        // ========================================
         window.addIndicatorRowEdit = function() {
-            console.log('[INLINE-EDIT] addIndicatorRowEdit called');
             var container = document.getElementById('indicator-container-edit');
             var currentRows = container.querySelectorAll('.indicator-row').length;
             var newIndex = currentRows + 1;
@@ -1934,21 +1865,14 @@ $results2 = $DB->get_records_sql($query2, $params2);
             container.insertAdjacentHTML('beforeend', getEditRowTemplate(newIndex));
             updateEditRowNumbers();
             
-            // Attach event listeners to the new delete button
             var newRow = container.lastElementChild;
             var deleteBtn = newRow.querySelector('.btn-remove-indicator-edit');
             deleteBtn.addEventListener('click', function() {
                 removeIndicatorRowEdit(this);
             });
-            
-            console.log('[INLINE-EDIT] Row added. Total rows:', container.querySelectorAll('.indicator-row').length);
         };
 
-        // ========================================
-        // REMOVE ROW FUNCTION EDIT
-        // ========================================
         function removeIndicatorRowEdit(btn) {
-            console.log('[INLINE-EDIT] removeIndicatorRowEdit called');
             var container = document.getElementById('indicator-container-edit');
             var rows = container.querySelectorAll('.indicator-row');
             
@@ -1956,15 +1880,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 var row = btn.closest('.indicator-row');
                 row.remove();
                 updateEditRowNumbers();
-                console.log('[INLINE-EDIT] Row removed. Total rows:', container.querySelectorAll('.indicator-row').length);
-            } else {
-                console.log('[INLINE-EDIT] Cannot delete last row');
             }
         }
 
-        // ========================================
-        // SERIALIZE TO JSON (EDIT)
-        // ========================================
         function serializeEditIndicators() {
             var indicators = [];
             var container = document.getElementById('indicator-container-edit');
@@ -1984,33 +1902,24 @@ $results2 = $DB->get_records_sql($query2, $params2);
             return JSON.stringify(indicators);
         }
 
-        // ========================================
-        // POPULATE EDIT MODAL ON OPEN
-        // ========================================
         var modalEditElement = document.getElementById('modalEditStep1');
         modalEditElement.addEventListener('shown.bs.modal', function() {
-            console.log('[INLINE-EDIT] modalEditStep1 opened');
-            
             var container = document.getElementById('indicator-container-edit');
             var hiddenField = document.getElementById('hidden_analysis_data_edit');
             var jsonData = hiddenField.value;
             
-            // Clear existing rows
             container.innerHTML = '';
             
-            // Parse and populate existing data
             if (jsonData && jsonData.trim()) {
                 try {
                     var indicators = JSON.parse(jsonData);
                     if (Array.isArray(indicators) && indicators.length > 0) {
-                        console.log('[INLINE-EDIT] Populating with', indicators.length, 'indicators');
                         indicators.forEach(function(item, index) {
                             container.insertAdjacentHTML('beforeend', getEditRowTemplate(index + 1));
                             var row = container.querySelectorAll('.indicator-row')[index];
                             row.querySelector('.indicator-cause').value = item.indicator || '';
                             row.querySelector('.indicator-analysis').value = item.analysis || '';
                             
-                            // Attach delete event
                             row.querySelector('.btn-remove-indicator-edit').addEventListener('click', function() {
                                 removeIndicatorRowEdit(this);
                             });
@@ -2019,40 +1928,27 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         return;
                     }
                 } catch (e) {
-                    console.error('[INLINE-EDIT] JSON parse error:', e);
+                    // If JSON parsing fails, show empty row
                 }
             }
             
-            // Default: add one empty row
             addIndicatorRowEdit();
         });
 
-        // ========================================
-        // ATTACH EVENT LISTENERS
-        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Add button click (Edit)
             var btnAddEdit = document.querySelector('#modalEditStep1 .btn-add-indicator');
             if (btnAddEdit) {
                 btnAddEdit.addEventListener('click', addIndicatorRowEdit);
             }
             
-            // Save button click (Edit) - Serialize BEFORE form submission
             var btnSaveEdit = document.getElementById('btnUpdatedStep1');
             if (btnSaveEdit) {
                 btnSaveEdit.addEventListener('click', function() {
-                    console.log('[INLINE-EDIT] Save button clicked');
-                    
-                    // Serialize indicators to JSON
                     var jsonPayload = serializeEditIndicators();
                     document.getElementById('hidden_analysis_data_edit').value = jsonPayload;
-                    console.log('[INLINE-EDIT] Serialized JSON:', jsonPayload);
                     
-                    // Submit via AJAX
                     var form = document.getElementById('formUbahStep1');
                     var formData = new FormData(form);
-                    
-                    // Convert FormData to URL-encoded string
                     var urlEncodedData = new URLSearchParams(formData).toString();
                     
                     fetch('formeditDataStep1.php', {
@@ -2066,7 +1962,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         return response.text();
                     })
                     .then(function(data) {
-                        console.log('[INLINE-EDIT] Response:', data);
                         Swal.fire({
                             icon: 'success',
                             title: 'Data berhasil disimpan!',
@@ -2080,14 +1975,11 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         });
                     })
                     .catch(function(error) {
-                        console.error('[INLINE-EDIT] Error:', error);
                         alert('Terjadi kesalahan saat menyimpan data.');
                     });
                 });
             }
         });
-        
-        console.log('[INLINE-EDIT] modalEditStep1 script initialized');
     })();
     </script>
 
