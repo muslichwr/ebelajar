@@ -8,6 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $group_project = required_param('group_project', PARAM_INT);
     $cmid = required_param('cmid', PARAM_INT);
     $step1_formulation = required_param('step1_formulation', PARAM_TEXT);
+    $problem_definition = optional_param('problem_definition', '', PARAM_TEXT);
+    $analysis_data = optional_param('analysis_data', '', PARAM_TEXT);
 
     // Mengecek data di tabel 'ebelajar'
     $project_records = $DB->get_records('project', ['group_project' => $group_project]);
@@ -20,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $record->id = $project_record->id;
     $record->groupproject = $group_project;
     $record->step1_formulation = $step1_formulation;
+    $record->problem_definition = $problem_definition;
+    $record->analysis_data = $analysis_data;
     $record->updated_at = $updated_at;
 
     if ($DB->update_record('project', $record)) {

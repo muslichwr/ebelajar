@@ -486,44 +486,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
     });
     </script>
 
-    <script>
-    $(document).ready(function() {
-        $('#btnSimpanStep1').click(function() {
-            var formData = new FormData($('#formTambahDataStep1')[0]);
-            var step1_formulation = $('[name="step1_formulation"]').val();
-
-            if (!step1_formulation) {
-                alert("Harap lengkapi semua bidang.");
-                return;
-            }
-            
-            $.ajax({
-                url: 'formtambahDataStep1.php',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    console.log(response);                   
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Data berhasil disimpan!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        // Setelah SweetAlert ditutup, tutup modal
-                        $('#formTambahDataStep1')[0].reset();
-                        $('#modalTambahStep1').modal('hide');
-                        location.reload();
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log("Terjadi kesalahan: " + error);
-                }
-            });
-        });
-    });
-    </script>
 
     <script>
     $(document).ready(function() {
@@ -603,31 +565,6 @@ $results2 = $DB->get_records_sql($query2, $params2);
     });
     </script>
 
-    <script>
-    $(document).ready(function() {
-        $('#btnUpdatedStep1').click(function() {
-            var formData = $('#formUbahStep1').serialize();
-            $.ajax({
-                url: 'formeditDataStep1.php',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    console.log(response);   
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Data berhasil disimpan!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        $('#formUbahStep1')[0].reset();
-                        $('#modalEditStep1').modal('hide');
-                        location.reload();
-                    });
-                }
-            });
-        });
-    });
-    </script>
 
     <script>
     $(document).ready(function() {
@@ -950,6 +887,46 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                         }
                                     ?>
                                 </p>
+                                
+                                <?php if (!empty($step->problem_definition)): ?>
+                                <p>
+                                    <strong>Orientasi Masalah:</strong> 
+                                    <?php echo $step->problem_definition; ?>
+                                </p>
+                                <?php endif; ?>
+                                
+                                <?php 
+                                // Display saved indicators (Selesai view)
+                                if (!empty($step->analysis_data)) {
+                                    $indicators_selesai = json_decode($step->analysis_data, true);
+                                    if (is_array($indicators_selesai) && count($indicators_selesai) > 0):
+                                ?>
+                                <div class="mt-3">
+                                    <strong>Indikator Penyebab Masalah:</strong>
+                                    <div class="mt-2">
+                                        <?php foreach ($indicators_selesai as $idx => $ind): ?>
+                                        <div class="card mb-2" style="border-left: 4px solid var(--custom-green);">
+                                            <div class="card-body py-2 px-3">
+                                                <div class="d-flex align-items-start">
+                                                    <span class="badge bg-success me-2"><?php echo ($idx + 1); ?></span>
+                                                    <div>
+                                                        <strong><?php echo htmlspecialchars($ind['indicator'] ?? ''); ?></strong>
+                                                        <?php if (!empty($ind['analysis'])): ?>
+                                                        <p class="mb-0 mt-1 small text-muted">
+                                                            <?php echo nl2br(htmlspecialchars($ind['analysis'])); ?>
+                                                        </p>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php 
+                                    endif;
+                                }
+                                ?>
                             </div>
                         </div>
                     <?php else: ?>
@@ -973,6 +950,46 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                         }
                                     ?>
                                 </p>
+                                
+                                <?php if (!empty($step->problem_definition)): ?>
+                                <p>
+                                    <strong>Orientasi Masalah:</strong> 
+                                    <?php echo $step->problem_definition; ?>
+                                </p>
+                                <?php endif; ?>
+                                
+                                <?php 
+                                // Display saved indicators
+                                if (!empty($step->analysis_data)) {
+                                    $indicators = json_decode($step->analysis_data, true);
+                                    if (is_array($indicators) && count($indicators) > 0):
+                                ?>
+                                <div class="mt-3">
+                                    <strong>Indikator Penyebab Masalah:</strong>
+                                    <div class="mt-2">
+                                        <?php foreach ($indicators as $index => $item): ?>
+                                        <div class="card mb-2" style="border-left: 4px solid var(--custom-green);">
+                                            <div class="card-body py-2 px-3">
+                                                <div class="d-flex align-items-start">
+                                                    <span class="badge bg-success me-2"><?php echo ($index + 1); ?></span>
+                                                    <div>
+                                                        <strong><?php echo htmlspecialchars($item['indicator'] ?? ''); ?></strong>
+                                                        <?php if (!empty($item['analysis'])): ?>
+                                                        <p class="mb-0 mt-1 small text-muted">
+                                                            <?php echo nl2br(htmlspecialchars($item['analysis'])); ?>
+                                                        </p>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php 
+                                    endif;
+                                }
+                                ?>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -1323,6 +1340,51 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             style="color:#000000; border: 1px solid #000000;" 
                             rows="4" required></textarea>
                     </div>
+
+                    <!-- Orientasi Masalah (Problem Definition) -->
+                    <div class="mb-3">
+                        <label for="problem_definition" class="form-label">Orientasi Masalah</label>
+                        <textarea id="problem_definition" name="problem_definition" 
+                            class="form-control shadow-sm rounded-lg p-3" 
+                            placeholder="Jelaskan orientasi dan latar belakang masalah" 
+                            style="color:#000000; border: 1px solid #000000;" 
+                            rows="4"></textarea>
+                    </div>
+
+                    <!-- Analisis & Indikator (Visual Repeater) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Indikator Penyebab Masalah</label>
+                        <p class="text-muted small mb-2">Tambahkan satu atau lebih indikator penyebab masalah beserta analisis dan sumber referensi.</p>
+                        
+                        <!-- Hidden field for final JSON - ID must match JS -->
+                        <textarea name="analysis_data" id="hidden_analysis_data_add" style="display:none;"></textarea>
+                        
+                        <!-- Container for indicator rows - class must be .indicator-container -->
+                        <div id="indicator-container-add" class="indicator-container mb-3">
+                            <!-- Initial row - class must be .indicator-row-item -->
+                            <div class="indicator-row-item card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-success indicator-number">Indikator #1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-row" style="display: none;">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Indikator Penyebab</label>
+                                    <input type="text" class="form-control input-indicator" placeholder="Contoh: Kurangnya pemahaman siswa">
+                                </div>
+                                <div class="mb-0">
+                                    <label class="form-label small">Analisis & Sumber Referensi</label>
+                                    <textarea class="form-control input-analysis" rows="2" placeholder="Jelaskan analisis dan sumber referensi"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add button - class must be .btn-add-indicator -->
+                        <button type="button" class="btn btn-outline-success btn-sm btn-add-indicator">
+                            <i class="fas fa-plus"></i> Tambah Indikator Masalah
+                        </button>
+                    </div>
                 </form>
               </div>
               <div class="modal-footer">
@@ -1496,6 +1558,253 @@ $results2 = $DB->get_records_sql($query2, $params2);
       </div>
     </div>
 
+
+    <!-- MODAL TAMBAH STEP 1 - NUCLEAR FIX (INLINE JS) -->
+    <div class="modal fade" id="modalTambahStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="exampleModalLabel">Tambah Rumusan Masalah</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahDataStep1" method="POST" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+
+                    <!-- Rumusan Masalah -->
+                    <div class="mb-3">
+                        <label for="step1_formulation_add" class="form-label">Rumusan Masalah</label>
+                        <textarea id="step1_formulation_add" name="step1_formulation" 
+                            class="form-control shadow-sm rounded-lg p-3" 
+                            placeholder="Tambahkan Rumusan Masalah" 
+                            style="color:#000000; border: 1px solid #000000;" 
+                            rows="4" required></textarea>
+                    </div>
+
+                    <!-- Orientasi Masalah (Problem Definition) -->
+                    <div class="mb-3">
+                        <label for="problem_definition_add" class="form-label">Orientasi Masalah</label>
+                        <textarea id="problem_definition_add" name="problem_definition" 
+                            class="form-control shadow-sm rounded-lg p-3" 
+                            placeholder="Jelaskan orientasi dan latar belakang masalah" 
+                            style="color:#000000; border: 1px solid #000000;" 
+                            rows="4"></textarea>
+                    </div>
+
+                    <!-- Analisis & Indikator (Visual Repeater - Add) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Indikator Penyebab Masalah</label>
+                        <p class="text-muted small mb-2">Tambahkan minimal 1 indikator penyebab masalah beserta analisis Anda.</p>
+                        
+                        <!-- Hidden field for final JSON -->
+                        <textarea name="analysis_data" id="analysis_data_add" style="display:none;"></textarea>
+                        
+                        <!-- Container for indicator rows -->
+                        <div id="indicator-container-add" class="mb-3">
+                            <!-- Initial row will be added by JavaScript -->
+                        </div>
+                        
+                        <!-- Add button -->
+                        <button type="button" id="btn-add-indicator-add" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i> Tambah Indikator Masalah
+                        </button>
+                    </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep1" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- ==================================================== -->
+    <!-- INLINE JAVASCRIPT FOR MODAL TAMBAH STEP1           -->
+    <!-- NO EXTERNAL DEPENDENCIES - ZERO LATENCY            -->
+    <!-- ==================================================== -->
+    <script>
+    (function() {
+        'use strict';
+        
+        console.log('[INLINE] modalTambahStep1 script loaded');
+        
+        // ========================================
+        // HTML TEMPLATE FOR NEW ROW
+        // ========================================
+        function getRowTemplate(index) {
+            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
+                '<div class="d-flex justify-content-between align-items-start mb-2">' +
+                    '<span class="badge bg-success row-number">Indikator #' + index + '</span>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-indicator">' +
+                        '<i class="fas fa-trash"></i> Hapus' +
+                    '</button>' +
+                '</div>' +
+                '<div class="mb-2">' +
+                    '<label class="form-label small">Indikator Penyebab</label>' +
+                    '<input type="text" class="form-control indicator-cause" placeholder="Contoh: Kurangnya pemahaman siswa" required>' +
+                '</div>' +
+                '<div class="mb-0">' +
+                    '<label class="form-label small">Analisis & Sumber Referensi</label>' +
+                    '<textarea class="form-control indicator-analysis" rows="2" placeholder="Jelaskan analisis dan sumber referensi"></textarea>' +
+                '</div>' +
+            '</div>';
+        }
+
+        // ========================================
+        // UPDATE ROW NUMBERS
+        // ========================================
+        function updateRowNumbers() {
+            var container = document.getElementById('indicator-container-add');
+            var rows = container.querySelectorAll('.indicator-row');
+            rows.forEach(function(row, index) {
+                var badge = row.querySelector('.row-number');
+                badge.textContent = 'Indikator #' + (index + 1);
+                
+                // Show/hide delete button
+                var deleteBtn = row.querySelector('.btn-remove-indicator');
+                if (rows.length > 1) {
+                    deleteBtn.style.display = '';
+                } else {
+                    deleteBtn.style.display = 'none';
+                }
+            });
+        }
+
+        // ========================================
+        // ADD ROW FUNCTION (Global Scope)
+        // ========================================
+        window.addIndicatorRow = function() {
+            console.log('[INLINE] addIndicatorRow called');
+            var container = document.getElementById('indicator-container-add');
+            var currentRows = container.querySelectorAll('.indicator-row').length;
+            var newIndex = currentRows + 1;
+            
+            container.insertAdjacentHTML('beforeend', getRowTemplate(newIndex));
+            updateRowNumbers();
+            
+            // Attach event listeners to the new delete button
+            var newRow = container.lastElementChild;
+            var deleteBtn = newRow.querySelector('.btn-remove-indicator');
+            deleteBtn.addEventListener('click', function() {
+                removeIndicatorRow(this);
+            });
+            
+            console.log('[INLINE] Row added. Total rows:', container.querySelectorAll('.indicator-row').length);
+        };
+
+        // ========================================
+        // REMOVE ROW FUNCTION (Global Scope)
+        // ========================================
+        function removeIndicatorRow(btn) {
+            console.log('[INLINE] removeIndicatorRow called');
+            var container = document.getElementById('indicator-container-add');
+            var rows = container.querySelectorAll('.indicator-row');
+            
+            if (rows.length > 1) {
+                var row = btn.closest('.indicator-row');
+                row.remove();
+                updateRowNumbers();
+                console.log('[INLINE] Row removed. Total rows:', container.querySelectorAll('.indicator-row').length);
+            } else {
+                console.log('[INLINE] Cannot delete last row');
+            }
+        }
+
+        // ========================================
+        // SERIALIZE TO JSON
+        // ========================================
+        function serializeIndicators() {
+            var indicators = [];
+            var container = document.getElementById('indicator-container-add');
+            var rows = container.querySelectorAll('.indicator-row');
+            
+            rows.forEach(function(row) {
+                var cause = row.querySelector('.indicator-cause').value;
+                var analysis = row.querySelector('.indicator-analysis').value;
+                if (cause && cause.trim()) {
+                    indicators.push({
+                        indicator: cause.trim(),
+                        analysis: analysis ? analysis.trim() : ''
+                    });
+                }
+            });
+            
+            return JSON.stringify(indicators);
+        }
+
+        // ========================================
+        // INITIALIZE MODAL ON OPEN
+        // ========================================
+        var modalElement = document.getElementById('modalTambahStep1');
+        modalElement.addEventListener('shown.bs.modal', function() {
+            console.log('[INLINE] modalTambahStep1 opened');
+            
+            // Clear container and add one empty row
+            var container = document.getElementById('indicator-container-add');
+            container.innerHTML = '';
+            addIndicatorRow();
+        });
+
+        // ========================================
+        // ATTACH EVENT LISTENERS
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add button click
+            document.getElementById('btn-add-indicator-add').addEventListener('click', addIndicatorRow);
+            
+            // Save button click - Serialize BEFORE form submission
+            document.getElementById('btnSimpanStep1').addEventListener('click', function() {
+                console.log('[INLINE] Save button clicked');
+                
+                // Validate step1_formulation
+                var formulation = document.getElementById('step1_formulation_add').value;
+                if (!formulation || !formulation.trim()) {
+                    alert('Harap lengkapi rumusan masalah.');
+                    return;
+                }
+                
+                // Serialize indicators to JSON
+                var jsonPayload = serializeIndicators();
+                document.getElementById('analysis_data_add').value = jsonPayload;
+                console.log('[INLINE] Serialized JSON:', jsonPayload);
+                
+                // Submit via AJAX (matching the existing pattern)
+                var formData = new FormData(document.getElementById('formTambahDataStep1'));
+                
+                fetch('formtambahDataStep1.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(data) {
+                    console.log('[INLINE] Response:', data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data berhasil disimpan!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        document.getElementById('formTambahDataStep1').reset();
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep1'));
+                        modal.hide();
+                        location.reload();
+                    });
+                })
+                .catch(function(error) {
+                    console.error('[INLINE] Error:', error);
+                    alert('Terjadi kesalahan saat menyimpan data.');
+                });
+            });
+        });
+        
+        console.log('[INLINE] modalTambahStep1 script initialized');
+    })();
+    </script>
+
     <div class="modal fade" id="modalEditStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -1519,6 +1828,35 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 rows="4" required><?php echo $project_data->step1_formulation; ?></textarea>
                         </div>
 
+                        <!-- Orientasi Masalah (Problem Definition) -->
+                        <div class="mb-3">
+                            <label for="problem_definition" class="form-label">Orientasi Masalah</label>
+                            <textarea id="problem_definition" name="problem_definition" 
+                                class="form-control shadow-sm rounded-lg p-3" 
+                                placeholder="Jelaskan orientasi dan latar belakang masalah" 
+                                style="color:#000000; border: 1px solid #000000;" 
+                                rows="4"><?php echo isset($project_data->problem_definition) ? $project_data->problem_definition : ''; ?></textarea>
+                        </div>
+
+                        <!-- Analisis & Indikator (Visual Repeater - Edit) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Indikator Penyebab Masalah</label>
+                            <p class="text-muted small mb-2">Edit indikator penyebab masalah dan analisis Anda.</p>
+                            
+                            <!-- Hidden field for final JSON - ID must match JS -->
+                            <textarea name="analysis_data" id="hidden_analysis_data_edit" style="display:none;"><?php echo isset($project_data->analysis_data) ? htmlspecialchars($project_data->analysis_data) : ''; ?></textarea>
+                            
+                            <!-- Container for indicator rows - class must be .indicator-container -->
+                            <div id="indicator-container-edit" class="indicator-container mb-3">
+                                <!-- Rows will be generated by JavaScript based on existing data -->
+                            </div>
+                            
+                            <!-- Add button - class must be .btn-add-indicator -->
+                            <button type="button" class="btn btn-outline-success btn-sm btn-add-indicator">
+                                <i class="fas fa-plus"></i> Tambah Indikator Masalah
+                            </button>
+                        </div>
+
                     </form>
                 </div>
                 
@@ -1530,6 +1868,228 @@ $results2 = $DB->get_records_sql($query2, $params2);
           </div>
       </div>
     </div>
+
+
+    <!-- ==================================================== -->
+    <!-- INLINE JAVASCRIPT FOR MODAL EDIT STEP1             -->
+    <!-- NO EXTERNAL DEPENDENCIES - ZERO LATENCY            -->
+    <!-- ==================================================== -->
+    <script>
+    (function() {
+        'use strict';
+        
+        console.log('[INLINE-EDIT] modalEditStep1 script loaded');
+        
+        // ========================================
+        // HTML TEMPLATE FOR EDIT ROW
+        // ========================================
+        function getEditRowTemplate(index) {
+            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
+                '<div class="d-flex justify-content-between align-items-start mb-2">' +
+                    '<span class="badge bg-success row-number">Indikator #' + index + '</span>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-indicator-edit">' +
+                        '<i class="fas fa-trash"></i> Hapus' +
+                    '</button>' +
+                '</div>' +
+                '<div class="mb-2">' +
+                    '<label class="form-label small">Indikator Penyebab</label>' +
+                    '<input type="text" class="form-control indicator-cause" placeholder="Contoh: Kurangnya pemahaman siswa" required>' +
+                '</div>' +
+                '<div class="mb-0">' +
+                    '<label class="form-label small">Analisis & Sumber Referensi</label>' +
+                    '<textarea class="form-control indicator-analysis" rows="2" placeholder="Jelaskan analisis dan sumber referensi"></textarea>' +
+                '</div>' +
+            '</div>';
+        }
+
+        // ========================================
+        // UPDATE ROW NUMBERS (EDIT)
+        // ========================================
+        function updateEditRowNumbers() {
+            var container = document.getElementById('indicator-container-edit');
+            var rows = container.querySelectorAll('.indicator-row');
+            rows.forEach(function(row, index) {
+                var badge = row.querySelector('.row-number');
+                badge.textContent = 'Indikator #' + (index + 1);
+                
+                // Show/hide delete button
+                var deleteBtn = row.querySelector('.btn-remove-indicator-edit');
+                if (rows.length > 1) {
+                    deleteBtn.style.display = '';
+                } else {
+                    deleteBtn.style.display = 'none';
+                }
+            });
+        }
+
+        // ========================================
+        // ADD ROW FUNCTION EDIT (Global Scope)
+        // ========================================
+        window.addIndicatorRowEdit = function() {
+            console.log('[INLINE-EDIT] addIndicatorRowEdit called');
+            var container = document.getElementById('indicator-container-edit');
+            var currentRows = container.querySelectorAll('.indicator-row').length;
+            var newIndex = currentRows + 1;
+            
+            container.insertAdjacentHTML('beforeend', getEditRowTemplate(newIndex));
+            updateEditRowNumbers();
+            
+            // Attach event listeners to the new delete button
+            var newRow = container.lastElementChild;
+            var deleteBtn = newRow.querySelector('.btn-remove-indicator-edit');
+            deleteBtn.addEventListener('click', function() {
+                removeIndicatorRowEdit(this);
+            });
+            
+            console.log('[INLINE-EDIT] Row added. Total rows:', container.querySelectorAll('.indicator-row').length);
+        };
+
+        // ========================================
+        // REMOVE ROW FUNCTION EDIT
+        // ========================================
+        function removeIndicatorRowEdit(btn) {
+            console.log('[INLINE-EDIT] removeIndicatorRowEdit called');
+            var container = document.getElementById('indicator-container-edit');
+            var rows = container.querySelectorAll('.indicator-row');
+            
+            if (rows.length > 1) {
+                var row = btn.closest('.indicator-row');
+                row.remove();
+                updateEditRowNumbers();
+                console.log('[INLINE-EDIT] Row removed. Total rows:', container.querySelectorAll('.indicator-row').length);
+            } else {
+                console.log('[INLINE-EDIT] Cannot delete last row');
+            }
+        }
+
+        // ========================================
+        // SERIALIZE TO JSON (EDIT)
+        // ========================================
+        function serializeEditIndicators() {
+            var indicators = [];
+            var container = document.getElementById('indicator-container-edit');
+            var rows = container.querySelectorAll('.indicator-row');
+            
+            rows.forEach(function(row) {
+                var cause = row.querySelector('.indicator-cause').value;
+                var analysis = row.querySelector('.indicator-analysis').value;
+                if (cause && cause.trim()) {
+                    indicators.push({
+                        indicator: cause.trim(),
+                        analysis: analysis ? analysis.trim() : ''
+                    });
+                }
+            });
+            
+            return JSON.stringify(indicators);
+        }
+
+        // ========================================
+        // POPULATE EDIT MODAL ON OPEN
+        // ========================================
+        var modalEditElement = document.getElementById('modalEditStep1');
+        modalEditElement.addEventListener('shown.bs.modal', function() {
+            console.log('[INLINE-EDIT] modalEditStep1 opened');
+            
+            var container = document.getElementById('indicator-container-edit');
+            var hiddenField = document.getElementById('hidden_analysis_data_edit');
+            var jsonData = hiddenField.value;
+            
+            // Clear existing rows
+            container.innerHTML = '';
+            
+            // Parse and populate existing data
+            if (jsonData && jsonData.trim()) {
+                try {
+                    var indicators = JSON.parse(jsonData);
+                    if (Array.isArray(indicators) && indicators.length > 0) {
+                        console.log('[INLINE-EDIT] Populating with', indicators.length, 'indicators');
+                        indicators.forEach(function(item, index) {
+                            container.insertAdjacentHTML('beforeend', getEditRowTemplate(index + 1));
+                            var row = container.querySelectorAll('.indicator-row')[index];
+                            row.querySelector('.indicator-cause').value = item.indicator || '';
+                            row.querySelector('.indicator-analysis').value = item.analysis || '';
+                            
+                            // Attach delete event
+                            row.querySelector('.btn-remove-indicator-edit').addEventListener('click', function() {
+                                removeIndicatorRowEdit(this);
+                            });
+                        });
+                        updateEditRowNumbers();
+                        return;
+                    }
+                } catch (e) {
+                    console.error('[INLINE-EDIT] JSON parse error:', e);
+                }
+            }
+            
+            // Default: add one empty row
+            addIndicatorRowEdit();
+        });
+
+        // ========================================
+        // ATTACH EVENT LISTENERS
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add button click (Edit)
+            var btnAddEdit = document.querySelector('#modalEditStep1 .btn-add-indicator');
+            if (btnAddEdit) {
+                btnAddEdit.addEventListener('click', addIndicatorRowEdit);
+            }
+            
+            // Save button click (Edit) - Serialize BEFORE form submission
+            var btnSaveEdit = document.getElementById('btnUpdatedStep1');
+            if (btnSaveEdit) {
+                btnSaveEdit.addEventListener('click', function() {
+                    console.log('[INLINE-EDIT] Save button clicked');
+                    
+                    // Serialize indicators to JSON
+                    var jsonPayload = serializeEditIndicators();
+                    document.getElementById('hidden_analysis_data_edit').value = jsonPayload;
+                    console.log('[INLINE-EDIT] Serialized JSON:', jsonPayload);
+                    
+                    // Submit via AJAX
+                    var form = document.getElementById('formUbahStep1');
+                    var formData = new FormData(form);
+                    
+                    // Convert FormData to URL-encoded string
+                    var urlEncodedData = new URLSearchParams(formData).toString();
+                    
+                    fetch('formeditDataStep1.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: urlEncodedData
+                    })
+                    .then(function(response) {
+                        return response.text();
+                    })
+                    .then(function(data) {
+                        console.log('[INLINE-EDIT] Response:', data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Data berhasil disimpan!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            form.reset();
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalEditStep1'));
+                            modal.hide();
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('[INLINE-EDIT] Error:', error);
+                        alert('Terjadi kesalahan saat menyimpan data.');
+                    });
+                });
+            }
+        });
+        
+        console.log('[INLINE-EDIT] modalEditStep1 script initialized');
+    })();
+    </script>
 
     <div class="modal fade" id="modalEditStep2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">

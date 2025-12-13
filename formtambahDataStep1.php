@@ -8,6 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $group_project = required_param('group_project', PARAM_INT);
     $cmid = required_param('cmid', PARAM_INT);
     $step1_formulation = required_param('step1_formulation', PARAM_TEXT);
+    $problem_definition = optional_param('problem_definition', '', PARAM_TEXT);
+    $analysis_data = optional_param('analysis_data', '', PARAM_TEXT);
 
     $coursemodules_records = $DB->get_records('course_modules', ['id' => $cmid]);
     
@@ -17,7 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($coursemodule_record) {
         $courseid = (int)$coursemodule_record->instance;
-        $project_records = $DB->get_records('project', ['ebelajar' => $courseid]);  
+        // CRITICAL FIX: Filter by BOTH ebelajar AND group_project to prevent data leak
+        $project_records = $DB->get_records('project', [
+            'ebelajar' => $courseid,
+            'group_project' => $group_project
+        ]);  
         
         if ($project_records) {
             $project_record = reset($project_records);
@@ -25,6 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $record->id = $project_record->id;
             $record->group_project = $group_project;
             $record->step1_formulation = $step1_formulation;
+            $record->problem_definition = $problem_definition;
+            $record->analysis_data = $analysis_data;
             $record->status_step1 = "Selesai";
             $record->status_step2 = "Mengerjakan";
             $record->updated_at = $updated_at;
