@@ -135,6 +135,43 @@ if ($student_records) {
     ';
 }
 
+// Build indicators HTML for Tahap 1
+$indicators_html = '';
+if ($step1_status == "Selesai" && !empty($step->analysis_data)) {
+    $indicators = json_decode($step->analysis_data, true);
+    if (is_array($indicators) && count($indicators) > 0) {
+        $indicators_html = '
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped bg-white">
+                <thead class="table-success">
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 35%;">Indikator Penyebab</th>
+                        <th style="width: 60%;">Analisis & Sumber Referensi</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        foreach ($indicators as $index => $indicator) {
+            $indicators_html .= '
+                    <tr>
+                        <td class="text-center">' . ($index + 1) . '</td>
+                        <td>' . htmlspecialchars($indicator['indicator'] ?? '') . '</td>
+                        <td>' . nl2br(htmlspecialchars($indicator['analysis'] ?? '')) . '</td>
+                    </tr>';
+        }
+        
+        $indicators_html .= '
+                </tbody>
+            </table>
+        </div>';
+    } else {
+        $indicators_html = '<div class="alert alert-info">Belum ada indikator yang ditambahkan.</div>';
+    }
+} else {
+    $indicators_html = '<div class="alert alert-info">Belum ada indikator yang ditambahkan.</div>';
+}
+
 echo '
 <div class="container mx-auto p-3" id="dataStep1">
     <div class="row">
@@ -143,16 +180,30 @@ echo '
                 '<h3>Tahap 1</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Rumusan Masalah</h4>
+                        <h4>Rumusan Masalah & Analisis</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Studi Kasus:</strong> ' . $ebelajar_records->case_study . '</p>
-                        <p><strong>Rumusan masalah:</strong> ' . 
+                        <p><strong>Studi Kasus:</strong> ' . htmlspecialchars($ebelajar_records->case_study) . '</p>
+                        <hr style="border-color: var(--custom-green);">
+                        
+                        <p><strong>Rumusan Masalah:</strong></p>
+                        <div class="bg-white p-3 rounded mb-3">' . 
                             (!empty($step->step1_formulation) ? 
-                                $step->step1_formulation : 
-                                '<span class="badge rounded-pill bg-warning text-dark">Tambahkan rumusan masalah menurut kelompok anda!</span>'
+                                nl2br(htmlspecialchars($step->step1_formulation)) : 
+                                '<span class="badge bg-warning text-dark">Belum ada rumusan masalah</span>'
                             ) . 
-                        '</p>
+                        '</div>
+                        
+                        <p><strong>Orientasi Masalah:</strong></p>
+                        <div class="bg-white p-3 rounded mb-3">' . 
+                            (!empty($step->problem_definition) ? 
+                                nl2br(htmlspecialchars($step->problem_definition)) : 
+                                '<span class="badge bg-warning text-dark">Belum ada orientasi masalah</span>'
+                            ) . 
+                        '</div>
+                        
+                        <p><strong>Indikator Penyebab Masalah:</strong></p>
+                        ' . $indicators_html . '
                     </div>
                 </div>' : 
                 '<h3>Tahap 1</h3>
@@ -163,6 +214,7 @@ echo '
         '</div>
     </div>
 </div>';
+
 
 echo '
 <div class="container mx-auto p-3" id="dataStep2">
