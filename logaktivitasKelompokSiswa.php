@@ -67,6 +67,15 @@ if ($result) {
     $project_data = null;
 }
 
+// Fetch indicators for display
+$indicators = [];
+if (isset($step) && $step && isset($step->id)) {
+    $indicators = $DB->get_records('project_indicators', 
+        ['project_id' => $step->id], 
+        'created_at ASC'
+    );
+}
+
 $query2 = "
     SELECT ar.*, u.username, u.firstname, u.lastname
     FROM {activity_report} ar
@@ -133,20 +142,110 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     <h3>Tahap 1</h3>
                     <div class="card">
                         <div class="card-header text-white" style="background-color: var(--custom-green);">
-                            <h4>Rumusan Masalah</h4>
+                            <h4><i class="fas fa-lightbulb"></i> Penentuan Pertanyaan Mendasar</h4>
                         </div>
                         <div class="card-body" style="background-color: var(--custom-blue);">
-                            <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
-                            <p>
-                                <strong>Rumusan masalah:</strong> 
-                                <?php 
+                            <!-- Scenario Display -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-book-open"></i> Skenario:</h5>
+                                <div class="p-3 bg-white rounded">
+                                    <?php 
+                                    $scenario = !empty($ebelajar_records->teacher_scenario) 
+                                        ? $ebelajar_records->teacher_scenario 
+                                        : $ebelajar_records->case_study;
+                                    echo nl2br(htmlspecialchars($scenario)); 
+                                    ?>
+                                </div>
+                            </div>
+
+                            <!-- Problem Formulation -->
+                            <div class="mb-4">
+                                <h5><i class="fas fa-question-circle"></i> Rumusan Masalah:</h5>
+                                <div class="p-3 bg-white rounded">
+                                    <?php 
                                     if (!empty($step->step1_formulation)) {
-                                        echo $step->step1_formulation;
+                                        echo nl2br(htmlspecialchars($step->step1_formulation));
                                     } else {
-                                        echo '<span class="badge rounded-pill bg-warning text-dark">Tambahkan rumusan masalah menurut kelompok anda!</span>';
+                                        echo '<span class="badge bg-warning text-dark">Belum diisi</span>';
                                     }
-                                ?>
-                            </p>
+                                    ?>
+                                </div>
+                            </div>
+
+                            <!-- Indicators Table -->
+                            <?php if (!empty($indicators)): ?>
+                            <div class="mb-3">
+                                <h5><i class="fas fa-list-check"></i> Indikator & Analisis (<?php echo count($indicators); ?>):</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover bg-white">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 5%" class="text-center">#</th>
+                                                <th style="width: 25%">Indikator</th>
+                                                <th style="width: 35%">Analisis</th>
+                                                <th style="width: 25%">Referensi</th>
+                                                <th style="width: 10%" class="text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php 
+                                        $no = 1;
+                                        foreach ($indicators as $ind): 
+                                            $refs = json_decode($ind->references, true);
+                                            $is_invalid = ($ind->is_valid == 0);
+                                            $row_class = $is_invalid ? 'table-secondary text-muted' : '';
+                                        ?>
+                                            <tr class="<?php echo $row_class; ?>">
+                                                <td class="text-center fw-bold"><?php echo $no++; ?></td>
+                                                <td class="<?php echo $is_invalid ? 'text-decoration-line-through' : ''; ?>">
+                                                    <?php echo htmlspecialchars($ind->indicator_name); ?>
+                                                </td>
+                                                <td class="<?php echo $is_invalid ? 'text-decoration-line-through' : ''; ?>">
+                                                    <?php echo nl2br(htmlspecialchars($ind->analysis)); ?>
+                                                </td>
+                                                <td>
+                                                    <?php if (is_array($refs) && count($refs) > 0): ?>
+                                                        <ol class="mb-0 ps-3 small">
+                                                        <?php foreach ($refs as $ref): ?>
+                                                            <li class="mb-1">
+                                                                <a href="<?php echo htmlspecialchars($ref); ?>" target="_blank" class="text-decoration-none">
+                                                                    <?php echo htmlspecialchars(strlen($ref) > 50 ? substr($ref, 0, 50) . '...' : $ref); ?>
+                                                                    <i class="fas fa-external-link-alt fa-xs"></i>
+                                                                </a>
+                                                            </li>
+                                                        <?php endforeach; ?>
+                                                        </ol>
+                                                        <?php if (count($refs) < 3): ?>
+                                                            <small class="text-danger d-block mt-1">
+                                                                <i class="fas fa-exclamation-triangle"></i> Kurang dari 3 referensi
+                                                            </small>
+                                                        <?php endif; ?>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-warning">Tidak ada referensi</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if ($is_invalid): ?>
+                                                        <span class="badge bg-secondary">
+                                                            <i class="fas fa-times-circle"></i> Tidak Terbukti
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check-circle"></i> Terbukti
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php else: ?>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Belum ada indikator yang ditambahkan oleh kelompok.
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php else: ?>

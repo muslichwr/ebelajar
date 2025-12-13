@@ -14,6 +14,7 @@
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false"/>
                 <FIELD NAME="intro" TYPE="text" NOTNULL="false"/>
                 <FIELD NAME="case_study" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="teacher_scenario" TYPE="text" NOTNULL="false"/>
                 <FIELD NAME="step3_schedule_image" TYPE="char" LENGTH="255" NOTNULL="false"/>
                 <FIELD NAME="step3_schedule_file" TYPE="char" LENGTH="255" NOTNULL="false"/>
                 <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false"/>
@@ -71,6 +72,7 @@
                 <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
                 <FIELD NAME="name_student" TYPE="char" LENGTH="255" NOTNULL="true"/>
                 <FIELD NAME="jobdesk" TYPE="char" LENGTH="255" NOTNULL="false"/>
+                <FIELD NAME="is_leader" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
                 <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
                 <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
             </FIELDS>
@@ -107,6 +109,24 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
                 <KEY NAME="group_projectfk" TYPE="foreign" FIELDS="group_project" REFTABLE="group_project" REFFIELDS="id"/>
                 <KEY NAME="ebelajarfk" TYPE="foreign" FIELDS="ebelajar" REFTABLE="ebelajar" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+
+        <!-- Table project_indicators -->
+        <TABLE NAME="project_indicators" COMMENT="Table for storing project indicators with analysis and references">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="project_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="indicator_name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+                <FIELD NAME="analysis" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="references" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="is_valid" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="projectfk" TYPE="foreign" FIELDS="project_id" REFTABLE="project" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
     </TABLES>

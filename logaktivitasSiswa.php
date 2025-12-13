@@ -82,6 +82,15 @@ if ($result) {
     $step4_status = $DB->get_field('project', 'status_step4', ['group_project' => $group_project]);
     $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
     $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
+    
+    // Fetch indicators for display
+    $indicators = [];
+    if ($step && isset($step->id)) {
+        $indicators = $DB->get_records('project_indicators', 
+            ['project_id' => $step->id], 
+            'created_at ASC'
+        );
+    }
 } else {
     $project_data = null;
     $group_project = null;
@@ -487,40 +496,156 @@ $results2 = $DB->get_records_sql($query2, $params2);
     </script>
 
     <script>
-    $(document).ready(function() {
-        $('#btnSimpanStep1').click(function() {
-            var formData = new FormData($('#formTambahDataStep1')[0]);
-            var step1_formulation = $('[name="step1_formulation"]').val();
+    let indicatorCount = 0;
 
-            if (!step1_formulation) {
-                alert("Harap lengkapi semua bidang.");
-                return;
-            }
+    // Function to add new indicator row - Make it global
+    window.addIndicatorRow = function() {
+        const rowId = indicatorCount++;
+        const row = `
+            <tr id="row_${rowId}" class="indicator-row">
+                <td>
+                    <input type="text" class="form-control ind-name" data-row="${rowId}" 
+                           placeholder="Contoh: Limbah Pabrik" required>
+                </td>
+                <td>
+                    <textarea class="form-control ind-analysis" data-row="${rowId}" 
+                              placeholder="Jelaskan analisis masalah..." rows="2" required></textarea>
+                </td>
+                <td>
+                    <input type="text" class="form-control mb-1 ind-ref" data-row="${rowId}" placeholder="Referensi 1 (URL/Sumber)" required>
+                    <input type="text" class="form-control mb-1 ind-ref" data-row="${rowId}" placeholder="Referensi 2 (URL/Sumber)" required>
+                    <input type="text" class="form-control ind-ref" data-row="${rowId}" placeholder="Referensi 3 (URL/Sumber)" required>
+                </td>
+                <td>
+                    <select class="form-select ind-valid" data-row="${rowId}" onchange="toggleGreyout(${rowId}, this.value)">
+                        <option value="1">Terbukti</option>
+                        <option value="0">Tidak Terbukti</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeIndicatorRow(${rowId})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $('#indicatorRows').append(row);
+    }
+
+    // Function to remove indicator row - Make it global
+    window.removeIndicatorRow = function(rowId) {
+        $('#row_' + rowId).remove();
+    }
+
+    // Function to toggle greyout - Make it global
+    window.toggleGreyout = function(rowId, isValid) {
+        const row = $('#row_' + rowId);
+        if (isValid == '0') {
+            row.addClass('table-secondary text-muted');
+        } else {
+            row.removeClass('table-secondary text-muted');
+        }
+    }
+
+    // Function to collect indicators data
+    function collectIndicatorsData() {
+        const indicators = [];
+        $('.indicator-row').each(function() {
+            const rowId = $(this).find('.ind-name').data('row');
+            const name = $(this).find('.ind-name').val().trim();
+            const analysis = $(this).find('.ind-analysis').val().trim();
+            const refs = [];
+            $(this).find('.ind-ref').each(function() {
+                const ref = $(this).val().trim();
+                if (ref) refs.push(ref);
+            });
+            const isValid = $(this).find('.ind-valid').val();
             
-            $.ajax({
-                url: 'formtambahDataStep1.php',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    console.log(response);                   
+            if (name && analysis && refs.length >= 3) {
+                indicators.push({
+                    name: name,
+                    analysis: analysis,
+                    references: JSON.stringify(refs),
+                    is_valid: isValid
+                });
+            }
+        });
+        return indicators;
+    }
+
+    // Use event delegation for dynamically added buttons
+    $(document).on('click', '#btnAddRow', function() {
+        addIndicatorRow();
+    });
+
+    // Step 1 Submit
+    $(document).on('click', '#btnSimpanStep1', function() {
+        // Validate formulation
+        const step1_formulation = $('[name="step1_formulation"]').val();
+        if (!step1_formulation) {
+            alert("Harap isi rumusan masalah.");
+            return;
+        }
+
+        // Collect indicators
+        const indicators = collectIndicatorsData();
+        
+        // Validate minimum references
+        let valid = true;
+        $('.indicator-row').each(function() {
+            const refs = [];
+            $(this).find('.ind-ref').each(function() {
+                const ref = $(this).val().trim();
+                if (ref) refs.push(ref);
+            });
+            if (refs.length < 3) {
+                valid = false;
+                alert("Setiap indikator harus memiliki minimal 3 referensi!");
+                return false;
+            }
+        });
+        
+        if (!valid) return;
+
+        // Set indicators data
+        $('#indicatorsData').val(JSON.stringify(indicators));
+
+        // Submit via AJAX
+        var formData = $('#formTambahDataStep1').serialize();
+        $.ajax({
+            url: 'formtambahDataStep1.php',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                if (response.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Data berhasil disimpan!',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        // Setelah SweetAlert ditutup, tutup modal
                         $('#formTambahDataStep1')[0].reset();
                         $('#modalTambahStep1').modal('hide');
                         location.reload();
                     });
-                },
-                error: function(xhr, status, error) {
-                    console.log("Terjadi kesalahan: " + error);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: response.message || 'Terjadi kesalahan'
+                    });
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.log("Terjadi kesalahan: " + error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menyimpan data'
+                });
+            }
         });
     });
     </script>
@@ -604,15 +729,155 @@ $results2 = $DB->get_records_sql($query2, $params2);
     </script>
 
     <script>
-    $(document).ready(function() {
-        $('#btnUpdatedStep1').click(function() {
-            var formData = $('#formUbahStep1').serialize();
-            $.ajax({
-                url: 'formeditDataStep1.php',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    console.log(response);   
+    let indicatorCountEdit = 0;
+    
+    // Function to add indicator row for edit mode - Make it global
+    window.addIndicatorRowEdit = function(name = '', analysis = '', refs = [], isValid = 1) {
+        const rowId = indicatorCountEdit++;
+        const refsArray = Array.isArray(refs) ? refs : [];
+        const ref1 = refsArray[0] || '';
+        const ref2 = refsArray[1] || '';
+        const ref3 = refsArray[2] || '';
+        
+        const row = `
+            <tr id="row_edit_${rowId}" class="indicator-row-edit ${isValid == 0 ? 'table-secondary text-muted' : ''}">
+                <td>
+                    <input type="text" class="form-control ind-name-edit" data-row="${rowId}" 
+                           placeholder="Contoh: Limbah Pabrik" value="${name}" required>
+                </td>
+                <td>
+                    <textarea class="form-control ind-analysis-edit" data-row="${rowId}" 
+                              placeholder="Jelaskan analisis masalah..." rows="2" required>${analysis}</textarea>
+                </td>
+                <td>
+                    <input type="text" class="form-control mb-1 ind-ref-edit" data-row="${rowId}" 
+                           placeholder="Referensi 1 (URL/Sumber)" value="${ref1}" required>
+                    <input type="text" class="form-control mb-1 ind-ref-edit" data-row="${rowId}" 
+                           placeholder="Referensi 2 (URL/Sumber)" value="${ref2}" required>
+                    <input type="text" class="form-control ind-ref-edit" data-row="${rowId}" 
+                           placeholder="Referensi 3 (URL/Sumber)" value="${ref3}" required>
+                </td>
+                <td>
+                    <select class="form-select ind-valid-edit" data-row="${rowId}" 
+                            onchange="toggleGreyoutEdit(${rowId}, this.value)">
+                        <option value="1" ${isValid == 1 ? 'selected' : ''}>Terbukti</option>
+                        <option value="0" ${isValid == 0 ? 'selected' : ''}>Tidak Terbukti</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeIndicatorRowEdit(${rowId})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $('#indicatorRowsEdit').append(row);
+    }
+    
+    window.removeIndicatorRowEdit = function(rowId) {
+        $('#row_edit_' + rowId).remove();
+    }
+    
+    window.toggleGreyoutEdit = function(rowId, isValid) {
+        const row = $('#row_edit_' + rowId);
+        if (isValid == '0') {
+            row.addClass('table-secondary text-muted');
+        } else {
+            row.removeClass('table-secondary text-muted');
+        }
+    }
+    
+    function collectIndicatorsDataEdit() {
+        const indicators = [];
+        $('.indicator-row-edit').each(function() {
+            const rowId = $(this).find('.ind-name-edit').data('row');
+            const name = $(this).find('.ind-name-edit').val().trim();
+            const analysis = $(this).find('.ind-analysis-edit').val().trim();
+            const refs = [];
+            $(this).find('.ind-ref-edit').each(function() {
+                const ref = $(this).val().trim();
+                if (ref) refs.push(ref);
+            });
+            const isValid = $(this).find('.ind-valid-edit').val();
+            
+            if (name && analysis && refs.length >= 3) {
+                indicators.push({
+                    name: name,
+                    analysis: analysis,
+                    references: JSON.stringify(refs),
+                    is_valid: isValid
+                });
+            }
+        });
+        return indicators;
+    }
+    
+    // Load existing indicators when edit modal opens
+    $(document).on('show.bs.modal', '#modalEditStep1', function() {
+        // Clear existing rows
+        $('#indicatorRowsEdit').empty();
+        indicatorCountEdit = 0;
+        
+        // Fetch existing indicators via AJAX
+        const groupProject = $('input[name="group_project"]').val();
+        $.ajax({
+            url: 'get_indicators.php',
+            type: 'GET',
+            data: { group_project: groupProject },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success && response.indicators.length > 0) {
+                    response.indicators.forEach(function(ind) {
+                        const refs = JSON.parse(ind.references);
+                        addIndicatorRowEdit(ind.indicator_name, ind.analysis, refs, ind.is_valid);
+                    });
+                }
+            }
+        });
+    });
+    
+    // Use event delegation for edit button
+    $(document).on('click', '#btnAddRowEdit', function() {
+        addIndicatorRowEdit();
+    });
+    
+    // Edit Step 1 Submit using event delegation
+    $(document).on('click', '#btnUpdatedStep1', function() {
+        const step1_formulation = $('#step1_formulation_edit').val();
+        if (!step1_formulation) {
+            alert("Harap isi rumusan masalah.");
+            return;
+        }
+
+        const indicators = collectIndicatorsDataEdit();
+        
+        let valid = true;
+        $('.indicator-row-edit').each(function() {
+            const refs = [];
+            $(this).find('.ind-ref-edit').each(function() {
+                const ref = $(this).val().trim();
+                if (ref) refs.push(ref);
+            });
+            if (refs.length < 3) {
+                valid = false;
+                alert("Setiap indikator harus memiliki minimal 3 referensi!");
+                return false;
+            }
+        });
+        
+        if (!valid) return;
+
+        $('#indicatorsDataEdit').val(JSON.stringify(indicators));
+
+        var formData = $('#formUbahStep1').serialize();
+        $.ajax({
+            url: 'formeditDataStep1.php',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);   
+                if (response.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Data berhasil disimpan!',
@@ -623,8 +888,22 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         $('#modalEditStep1').modal('hide');
                         location.reload();
                     });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: response.message || 'Terjadi kesalahan'
+                    });
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.log("Terjadi kesalahan: " + error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menyimpan data'
+                });
+            }
         });
     });
     </script>
@@ -932,46 +1211,146 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     <?php if ($step1_status == "Selesai"): ?>
                         <h3>Tahap 1</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep1"><i class="fas fa-plus"></i> Edit Rumusan masalah</button>
+                            <?php if ($result && $result->is_leader): ?>
+                                <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep1">
+                                    <i class="fas fa-edit"></i> Edit Rumusan masalah
+                                </button>
+                            <?php else: ?>
+                                <span class="badge bg-secondary p-2">
+                                    <i class="fas fa-lock"></i> Hanya ketua yang dapat mengedit
+                                </span>
+                            <?php endif; ?>
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Rumusan Masalah</h4>
+                                <h4><i class="fas fa-lightbulb"></i> Penentuan Pertanyaan Mendasar</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
-                                <p>
-                                    <strong>Rumusan masalah:</strong> 
-                                    <?php 
+                                <!-- Scenario Display -->
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-book-open"></i> Skenario:</h5>
+                                    <div class="p-3 bg-white rounded">
+                                        <?php 
+                                        $scenario = !empty($ebelajar_records->teacher_scenario) 
+                                            ? $ebelajar_records->teacher_scenario 
+                                            : $ebelajar_records->case_study;
+                                        echo nl2br(htmlspecialchars($scenario)); 
+                                        ?>
+                                    </div>
+                                </div>
+
+                                <!-- Problem Formulation -->
+                                <div class="mb-4">
+                                    <h5><i class="fas fa-question-circle"></i> Rumusan Masalah:</h5>
+                                    <div class="p-3 bg-white rounded">
+                                        <?php 
                                         if (!empty($step->step1_formulation)) {
-                                            echo $step->step1_formulation;
+                                            echo nl2br(htmlspecialchars($step->step1_formulation));
                                         } else {
-                                            echo '<span class="badge rounded-pill bg-warning text-dark">Tambahkan rumusan masalah menurut kelompok anda!</span>';
+                                            echo '<span class="badge bg-warning text-dark">Belum diisi</span>';
                                         }
-                                    ?>
-                                </p>
+                                        ?>
+                                    </div>
+                                </div>
+
+                                <!-- Indicators Table -->
+                                <?php if (!empty($indicators)): ?>
+                                <div class="mb-3">
+                                    <h5><i class="fas fa-list-check"></i> Indikator & Analisis (<?php echo count($indicators); ?>):</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover bg-white">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 5%" class="text-center">#</th>
+                                                    <th style="width: 25%">Indikator</th>
+                                                    <th style="width: 35%">Analisis</th>
+                                                    <th style="width: 25%">Referensi</th>
+                                                    <th style="width: 10%" class="text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php 
+                                            $no = 1;
+                                            foreach ($indicators as $ind): 
+                                                $refs = json_decode($ind->references, true);
+                                                $is_invalid = ($ind->is_valid == 0);
+                                                $row_class = $is_invalid ? 'table-secondary text-muted' : '';
+                                            ?>
+                                                <tr class="<?php echo $row_class; ?>">
+                                                    <td class="text-center fw-bold"><?php echo $no++; ?></td>
+                                                    <td class="<?php echo $is_invalid ? 'text-decoration-line-through' : ''; ?>">
+                                                        <?php echo htmlspecialchars($ind->indicator_name); ?>
+                                                    </td>
+                                                    <td class="<?php echo $is_invalid ? 'text-decoration-line-through' : ''; ?>">
+                                                        <?php echo nl2br(htmlspecialchars($ind->analysis)); ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if (is_array($refs) && count($refs) > 0): ?>
+                                                            <ol class="mb-0 ps-3 small">
+                                                            <?php foreach ($refs as $ref): ?>
+                                                                <li class="mb-1">
+                                                                    <a href="<?php echo htmlspecialchars($ref); ?>" target="_blank" class="text-decoration-none">
+                                                                        <?php echo htmlspecialchars(strlen($ref) > 50 ? substr($ref, 0, 50) . '...' : $ref); ?>
+                                                                        <i class="fas fa-external-link-alt fa-xs"></i>
+                                                                    </a>
+                                                                </li>
+                                                            <?php endforeach; ?>
+                                                            </ol>
+                                                            <?php if (count($refs) < 3): ?>
+                                                                <small class="text-danger d-block mt-1">
+                                                                    <i class="fas fa-exclamation-triangle"></i> Kurang dari 3 referensi
+                                                                </small>
+                                                            <?php endif; ?>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-warning">Tidak ada referensi</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if ($is_invalid): ?>
+                                                            <span class="badge bg-secondary">
+                                                                <i class="fas fa-times-circle"></i> Tidak Terbukti
+                                                            </span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-success">
+                                                                <i class="fas fa-check-circle"></i> Terbukti
+                                                            </span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i> Belum ada indikator yang ditambahkan.
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php else: ?>
                         <h3>Tahap 1</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep1"><i class="fas fa-plus"></i> Tambah Rumusan masalah</button>
+                            <?php if ($result && $result->is_leader): ?>
+                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep1">
+                                    <i class="fas fa-plus"></i> Tambah Rumusan masalah
+                                </button>
+                            <?php else: ?>
+                                <span class="badge bg-secondary p-2">
+                                    <i class="fas fa-lock"></i> Hanya ketua yang dapat menambah
+                                </span>
+                            <?php endif; ?>
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
                                 <h4>Rumusan Masalah</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
+                                <p><strong>Studi Kasus:</strong> <?php echo nl2br(htmlspecialchars($ebelajar_records->case_study)); ?></p>
                                 <p>
                                     <strong>Rumusan masalah:</strong> 
-                                    <?php 
-                                        if (!empty($step->step1_formulation)) {
-                                            echo $step->step1_formulation;
-                                        } else {
-                                            echo '<span class="badge rounded-pill bg-warning text-dark">Tambahkan rumusan masalah menurut kelompok anda!</span>';
-                                        }
-                                    ?>
+                                    <span class="badge rounded-pill bg-warning text-dark">Belum ada data. Silakan tambahkan rumusan masalah!</span>
                                 </p>
                             </div>
                         </div>
@@ -1303,31 +1682,83 @@ $results2 = $DB->get_records_sql($query2, $params2);
         </div>
     </div>
 
+
     <div class="modal fade" id="modalTambahStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content">
               <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Tambah Jawaban Tahap 1</h5>
               </div>
               <div class="modal-body">
-                <form id="formTambahDataStep1" method="POST" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+                <form id="formTambahDataStep1" method="POST" class="p-4 border rounded bg-light">
                     <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
                     <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+                    <input type="hidden" name="indicators" id="indicatorsData">
+                    
+                    <!-- Display Scenario from Teacher -->
+                    <?php if (!empty($ebelajar_records->teacher_scenario)): ?>
+                        <div class="alert alert-info mb-4">
+                            <h6 class="fw-bold"><i class="fas fa-book"></i> Skenario dari Guru:</h6>
+                            <p class="mb-0"><?php echo nl2br(htmlspecialchars($ebelajar_records->teacher_scenario)); ?></p>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-secondary mb-4">
+                            <h6 class="fw-bold"><i class="fas fa-book"></i> Studi Kasus:</h6>
+                            <p class="mb-0"><?php echo nl2br(htmlspecialchars($ebelajar_records->case_study)); ?></p>
+                        </div>
+                    <?php endif; ?>
 
-                    <!-- Rumusan Masalah -->
-                    <div class="mb-3">
-                        <label for="step1_formulation" class="form-label">Rumusan Masalah</label>
+                    <!-- Problem Formulation -->
+                    <div class="mb-4">
+                        <label for="step1_formulation" class="form-label fw-bold">Rumusan Masalah</label>
                         <textarea id="step1_formulation" name="step1_formulation" 
                             class="form-control shadow-sm rounded-lg p-3" 
-                            placeholder="Tambahkan Deskripsi Proyek" 
+                            placeholder="Tulis rumusan masalah hasil diskusi kelompok..." 
                             style="color:#000000; border: 1px solid #000000;" 
-                            rows="4" required></textarea>
+                            rows="3" required></textarea>
                     </div>
+                    
+                    <!-- Dynamic Indicators Table -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Analisis Indikator & Referensi</label>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 25%">Nama Indikator</th>
+                                        <th style="width: 30%">Analisis</th>
+                                        <th style="width: 30%">Referensi (Min. 3)</th>
+                                        <th style="width: 10%">Status</th>
+                                        <th style="width: 5%">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="indicatorRows">
+                                    <!-- Rows will be added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddRow">
+                            <i class="fas fa-plus"></i> Tambah Indikator
+                        </button>
+                        <small class="text-muted d-block mt-2">
+                            <i class="fas fa-info-circle"></i> Setiap indikator harus memiliki minimal 3 referensi (URL/sumber).
+                        </small>
+                    </div>
+                    
+                    <?php if (!$result->is_leader): ?>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-lock"></i> Hanya ketua kelompok yang dapat menyimpan data.
+                        </div>
+                    <?php endif; ?>
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep1" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
-                  <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
+                  <button id="btnSimpanStep1" type="button" class="btn rounded-pill px-4" 
+                          style="background-color: var(--custom-green); color:#ffffff"
+                          <?php echo (!$result->is_leader) ? 'disabled title="Hanya ketua kelompok yang dapat menyimpan"' : ''; ?>>
+                      <i class="fas fa-save"></i> Simpan
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
       </div>
@@ -1496,36 +1927,85 @@ $results2 = $DB->get_records_sql($query2, $params2);
       </div>
     </div>
 
+
     <div class="modal fade" id="modalEditStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content">
               <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Edit Rumusan Masalah</h5>
               </div>
               <div class="modal-body">
-
                 <div id="editLoad">
-                    <form id="formUbahStep1" method="POST" class="p-3 border rounded bg-light">
+                    <form id="formUbahStep1" method="POST" class="p-4 border rounded bg-light">
                         <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
                         <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+                        <input type="hidden" name="indicators" id="indicatorsDataEdit">
+                        
+                        <!-- Display Scenario from Teacher -->
+                        <?php if (!empty($ebelajar_records->teacher_scenario)): ?>
+                            <div class="alert alert-info mb-4">
+                                <h6 class="fw-bold"><i class="fas fa-book"></i> Skenario dari Guru:</h6>
+                                <p class="mb-0"><?php echo nl2br(htmlspecialchars($ebelajar_records->teacher_scenario)); ?></p>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-secondary mb-4">
+                                <h6 class="fw-bold"><i class="fas fa-book"></i> Studi Kasus:</h6>
+                                <p class="mb-0"><?php echo nl2br(htmlspecialchars($ebelajar_records->case_study)); ?></p>
+                            </div>
+                        <?php endif; ?>
 
-                        <!-- Rumusan Masalah -->
-                        <div class="mb-3">
-                            <label for="step1_formulation" class="form-label">Rumusan Masalah</label>
-                            <textarea id="step1_formulation" name="step1_formulation" 
+                        <!-- Problem Formulation -->
+                        <div class="mb-4">
+                            <label for="step1_formulation_edit" class="form-label fw-bold">Rumusan Masalah</label>
+                            <textarea id="step1_formulation_edit" name="step1_formulation" 
                                 class="form-control shadow-sm rounded-lg p-3" 
-                                placeholder="Tambahkan Deskripsi Proyek" 
+                                placeholder="Tulis rumusan masalah hasil diskusi kelompok..." 
                                 style="color:#000000; border: 1px solid #000000;" 
-                                rows="4" required><?php echo $project_data->step1_formulation; ?></textarea>
+                                rows="3" required><?php echo htmlspecialchars($project_data->step1_formulation ?? ''); ?></textarea>
                         </div>
-
+                        
+                        <!-- Dynamic Indicators Table -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Analisis Indikator & Referensi</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 25%">Nama Indikator</th>
+                                            <th style="width: 30%">Analisis</th>
+                                            <th style="width: 30%">Referensi (Min. 3)</th>
+                                            <th style="width: 10%">Status</th>
+                                            <th style="width: 5%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicatorRowsEdit">
+                                        <!-- Rows will be loaded from existing data -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddRowEdit">
+                                <i class="fas fa-plus"></i> Tambah Indikator
+                            </button>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle"></i> Setiap indikator harus memiliki minimal 3 referensi (URL/sumber).
+                            </small>
+                        </div>
+                        
+                        <?php if (!$result->is_leader): ?>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-lock"></i> Hanya ketua kelompok yang dapat menyimpan data.
+                            </div>
+                        <?php endif; ?>
                     </form>
                 </div>
-                
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdatedStep1" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
-                  <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
+                  <button id="btnUpdatedStep1" type="button" class="btn rounded-pill px-4" 
+                          style="background-color: var(--custom-green); color:#ffffff"
+                          <?php echo (!$result->is_leader) ? 'disabled title="Hanya ketua kelompok yang dapat menyimpan"' : ''; ?>>
+                      <i class="fas fa-save"></i> Simpan
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
       </div>

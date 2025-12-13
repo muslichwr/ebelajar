@@ -17,10 +17,58 @@
                 var mainDiv = document.querySelector('div[role="main"]');
                 if (mainDiv) {
                     mainDiv.innerHTML = xhr.responseText;
+                    
+                    // Inisialisasi event handler untuk modal setup guru
+                    initializeSetupGuruModal();
                 }
             }
         };
         xhr.send();
+    }
+    
+    // Function untuk inisialisasi modal setup guru
+    function initializeSetupGuruModal() {
+        const btnSaveSetup = document.getElementById('btnSaveSetup');
+        if (btnSaveSetup) {
+            btnSaveSetup.addEventListener('click', function() {
+                const formData = new FormData(document.getElementById('formSetupGuru'));
+                
+                fetch('formsetupguru.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            // Reload konten kelompok via AJAX
+                            const kelompokId = document.querySelector('input[name="group_project_id"]').value;
+                            const cmid = document.querySelector('input[name="cmid"]').value;
+                            lihat(kelompokId, cmid);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Terjadi kesalahan: ' + error
+                    });
+                });
+            });
+        }
     }
 </script>
 
