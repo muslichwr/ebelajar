@@ -30,5 +30,23 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121300, 'ebelajar');
     }
 
+    // Upgrade to version 2024121600: Add planning_data column for Syntax 2 (Jadwal Proyek)
+    if ($oldversion < 2024121600) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field planning_data to be added to project
+        $field = new xmldb_field('planning_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'step2_pondation');
+        
+        // Conditionally add field planning_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121600, 'ebelajar');
+    }
+
     return true;
 }

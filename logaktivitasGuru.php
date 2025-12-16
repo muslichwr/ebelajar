@@ -216,6 +216,48 @@ echo '
 </div>';
 
 
+
+// Build schedule HTML for Tahap 2
+$schedule_html = '';
+if (!empty($step->planning_data)) {
+    $schedule_data = json_decode($step->planning_data, true);
+    if (is_array($schedule_data) && count($schedule_data) > 0) {
+        $schedule_html = '
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped bg-white">
+                <thead class="table-success">
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 30%;">Kegiatan</th>
+                        <th style="width: 15%;">Tanggal Mulai</th>
+                        <th style="width: 15%;">Tanggal Selesai</th>
+                        <th style="width: 35%;">Penanggung Jawab</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        foreach ($schedule_data as $index => $task) {
+            $schedule_html .= '
+                    <tr>
+                        <td class="text-center">' . ($index + 1) . '</td>
+                        <td>' . htmlspecialchars($task['task'] ?? '') . '</td>
+                        <td>' . htmlspecialchars($task['start_date'] ?? '') . '</td>
+                        <td>' . htmlspecialchars($task['end_date'] ?? '') . '</td>
+                        <td>' . htmlspecialchars($task['pic'] ?? '') . '</td>
+                    </tr>';
+        }
+        
+        $schedule_html .= '
+                </tbody>
+            </table>
+        </div>';
+    } else {
+        $schedule_html = '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+    }
+} else {
+    $schedule_html = '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+}
+
 echo '
 <div class="container mx-auto p-3" id="dataStep2">
     <div class="row">
@@ -224,32 +266,22 @@ echo '
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Rancangan Proyek</h4>
+                        <h4>Penyusunan Jadwal Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
-                        <p><strong>file:</strong> ' .
-                            (!empty($step->step2_pondation) ? 
-                                '<a href="' . (new moodle_url('/mod/ebelajar/' . $step->step2_pondation))->out() . '" download>' . basename($step->step2_pondation) . '</a>' : 
-                                '<span class="badge rounded-pill bg-warning text-dark">Tambahkan file pondasi kelompok anda!</span>'
-                            ) . 
-                        '</p>
+                        <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
+                        ' . $schedule_html . '
                     </div>
                 </div>' : 
             ($step2_status == "Mengerjakan" ? 
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Rancangan Proyek</h4>
+                        <h4>Penyusunan Jadwal Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
-                        <p><strong>file:</strong> ' .
-                            (!empty($step->step2_pondation) ? 
-                                $step->step2_pondation : 
-                                '<span class="badge rounded-pill bg-warning text-dark">Tambahkan file pondasi kelompok anda!</span>'
-                            ) . 
-                        '</p>
+                        <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
+                        ' . $schedule_html . '
                     </div>
                 </div>' :
                 '<h3>Tahap 2</h3>

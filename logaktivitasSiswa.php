@@ -873,7 +873,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Rumusan Masalah</h4>
+                                <h4>Rumusan Masalah & Analisis</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
                                 <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
@@ -1003,47 +1003,101 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     <?php if ($step2_status == "Selesai"): ?>
                         <h3>Tahap 2</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep2"><i class="fas fa-plus"></i> Edit File Indikator</button>
+                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep2"><i class="fas fa-edit"></i> Edit Jadwal Proyek</button>
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Penyusunan Indikator</h4>
+                                <h4>Penyusunan Jadwal Proyek</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
-                                <p>
-                                    <strong>file:</strong> 
-                                    <?php 
-                                        if (!empty($step->step2_pondation)) {
-                                            echo '<a href="'. (new moodle_url('/mod/ebelajar/' . $step->step2_pondation))->out() .'" download>'.basename($step->step2_pondation).'</a>';
-                                        } else {
-                                            echo '<span class="badge rounded-pill bg-warning text-dark">Tambahkan file pondasi kelompo anda!</span>';
-                                        }
-                                    ?>
-                                </p>
+                                <p><strong>Jadwal pelaksanaan proyek kelompok Anda:</strong></p>
+                                <?php 
+                                if (!empty($step->planning_data)) {
+                                    $schedule_data = json_decode($step->planning_data, true);
+                                    if (is_array($schedule_data) && count($schedule_data) > 0):
+                                ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped bg-white">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th style="width: 50px;">No</th>
+                                                <th>Kegiatan</th>
+                                                <th style="width: 130px;">Tanggal Mulai</th>
+                                                <th style="width: 130px;">Tanggal Selesai</th>
+                                                <th>Penanggung Jawab</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($schedule_data as $idx => $task): ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo ($idx + 1); ?></td>
+                                                <td><?php echo htmlspecialchars($task['task'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['start_date'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['end_date'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['pic'] ?? ''); ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php 
+                                    else:
+                                        echo '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+                                    endif;
+                                } else {
+                                    echo '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Mengerjakan"): ?>
                         <h3>Tahap 2</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep2"><i class="fas fa-plus"></i> Tambah File Pondasi Kelompok</button>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep2"><i class="fas fa-plus"></i> Tambah Jadwal Proyek</button>
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Penyusunan Indikator</h4>
+                                <h4>Penyusunan Jadwal Proyek</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
-                                <p>
-                                    <strong>file:</strong> 
-                                    <?php 
-                                        if (!empty($step->step2_pondation)) {
-                                            echo $step->step2_pondation;
-                                        } else {
-                                            echo '<span class="badge rounded-pill bg-warning text-dark">Tambahkan file pondasi kelompo anda!</span>';
-                                        }
-                                    ?>
-                                </p>
+                                <p><strong>Silahkan susun jadwal pelaksanaan proyek kelompok Anda.</strong></p>
+                                <?php 
+                                if (!empty($step->planning_data)) {
+                                    $schedule_data = json_decode($step->planning_data, true);
+                                    if (is_array($schedule_data) && count($schedule_data) > 0):
+                                ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped bg-white">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th style="width: 50px;">No</th>
+                                                <th>Kegiatan</th>
+                                                <th style="width: 130px;">Tanggal Mulai</th>
+                                                <th style="width: 130px;">Tanggal Selesai</th>
+                                                <th>Penanggung Jawab</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($schedule_data as $idx => $task): ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo ($idx + 1); ?></td>
+                                                <td><?php echo htmlspecialchars($task['task'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['start_date'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['end_date'] ?? ''); ?></td>
+                                                <td><?php echo htmlspecialchars($task['pic'] ?? ''); ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php 
+                                    else:
+                                        echo '<div class="alert alert-warning">Belum ada jadwal yang disusun. Klik tombol "Tambah Jadwal Proyek" untuk memulai.</div>';
+                                    endif;
+                                } else {
+                                    echo '<div class="alert alert-warning">Belum ada jadwal yang disusun. Klik tombol "Tambah Jadwal Proyek" untuk memulai.</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Belum Selesai"): ?>
@@ -1322,24 +1376,37 @@ $results2 = $DB->get_records_sql($query2, $params2);
 
 
 
-    <div class="modal fade" id="modalTambahStep2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-      <div class="modal-dialog" role="document">
+    <!-- MODAL TAMBAH STEP 2 - JADWAL PROYEK (INLINE JS) -->
+    <div class="modal fade" id="modalTambahStep2" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep2Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
               <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
-                  <h5 class="modal-title" id="exampleModalLabel">Tambah Jawaban Tahap 2</h5>
+                  <h5 class="modal-title" id="modalTambahStep2Label">Tambah Jadwal Proyek</h5>
               </div>
               <div class="modal-body">
-                <form id="formTambahDataStep2" method="POST" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+                <form id="formTambahDataStep2" method="POST" class="p-3 border rounded bg-light">
                     <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
                     <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
 
-                    <!-- File Step 2 -->
+                    <!-- Hidden field for final JSON -->
+                    <textarea name="planning_data" id="planning_data_add" style="display:none;"></textarea>
+
+                    <!-- Schedule Rows Container -->
                     <div class="mb-3">
-                        <label for="step2_pondation" class="form-label">Upload FIle</label>
-                        <input type="file" id="step2_pondation" name="step2_pondation" 
-                            class="form-control rounded-2 px-3 py-2" 
-                            style="color:#000000;" accept=".pdf" required>
+                        <label class="form-label fw-bold">Jadwal Kegiatan Proyek</label>
+                        <p class="text-muted small mb-2">Tambahkan kegiatan proyek beserta jadwal dan penanggung jawab.</p>
+                        
+                        <!-- Container for schedule rows -->
+                        <div id="schedule-container-add" class="mb-3">
+                            <!-- Initial row will be added by JavaScript -->
+                        </div>
+                        
+                        <!-- Add button -->
+                        <button type="button" id="btn-add-schedule-add" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i> Tambah Kegiatan
+                        </button>
                     </div>
+
                 </form>
               </div>
               <div class="modal-footer">
@@ -1349,6 +1416,165 @@ $results2 = $DB->get_records_sql($query2, $params2);
           </div>
       </div>
     </div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        function getScheduleRowTemplateAdd(index) {
+            return '<div class="schedule-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #17a2b8 !important;">' +
+                '<div class="d-flex justify-content-between align-items-start mb-2">' +
+                    '<span class="badge bg-info row-number">Kegiatan #' + index + '</span>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-schedule">' +
+                        '<i class="fas fa-trash"></i> Hapus' +
+                    '</button>' +
+                '</div>' +
+                '<div class="mb-2">' +
+                    '<label class="form-label small">Nama Kegiatan</label>' +
+                    '<input type="text" class="form-control schedule-task" placeholder="Contoh: Riset Awal" required>' +
+                '</div>' +
+                '<div class="row mb-2">' +
+                    '<div class="col-md-6">' +
+                        '<label class="form-label small">Tanggal Mulai</label>' +
+                        '<input type="date" class="form-control schedule-start">' +
+                    '</div>' +
+                    '<div class="col-md-6">' +
+                        '<label class="form-label small">Tanggal Selesai</label>' +
+                        '<input type="date" class="form-control schedule-end">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="mb-0">' +
+                    '<label class="form-label small">Penanggung Jawab (PIC)</label>' +
+                    '<input type="text" class="form-control schedule-pic" placeholder="Nama anggota yang bertanggung jawab">' +
+                '</div>' +
+            '</div>';
+        }
+
+        function updateScheduleRowNumbersAdd() {
+            var container = document.getElementById('schedule-container-add');
+            var rows = container.querySelectorAll('.schedule-row');
+            rows.forEach(function(row, index) {
+                var badge = row.querySelector('.row-number');
+                badge.textContent = 'Kegiatan #' + (index + 1);
+                
+                var deleteBtn = row.querySelector('.btn-remove-schedule');
+                if (rows.length > 1) {
+                    deleteBtn.style.display = '';
+                } else {
+                    deleteBtn.style.display = 'none';
+                }
+            });
+        }
+
+        window.addScheduleRowAdd = function() {
+            var container = document.getElementById('schedule-container-add');
+            var currentRows = container.querySelectorAll('.schedule-row').length;
+            var newIndex = currentRows + 1;
+            
+            container.insertAdjacentHTML('beforeend', getScheduleRowTemplateAdd(newIndex));
+            updateScheduleRowNumbersAdd();
+            
+            var newRow = container.lastElementChild;
+            var deleteBtn = newRow.querySelector('.btn-remove-schedule');
+            deleteBtn.addEventListener('click', function() {
+                removeScheduleRowAdd(this);
+            });
+        };
+
+        function removeScheduleRowAdd(btn) {
+            var container = document.getElementById('schedule-container-add');
+            var rows = container.querySelectorAll('.schedule-row');
+            
+            if (rows.length > 1) {
+                var row = btn.closest('.schedule-row');
+                row.remove();
+                updateScheduleRowNumbersAdd();
+            }
+        }
+
+        function serializeScheduleAdd() {
+            var schedule = [];
+            var container = document.getElementById('schedule-container-add');
+            var rows = container.querySelectorAll('.schedule-row');
+            
+            rows.forEach(function(row) {
+                var task = row.querySelector('.schedule-task').value;
+                var startDate = row.querySelector('.schedule-start').value;
+                var endDate = row.querySelector('.schedule-end').value;
+                var pic = row.querySelector('.schedule-pic').value;
+                
+                if (task && task.trim()) {
+                    schedule.push({
+                        task: task.trim(),
+                        start_date: startDate || '',
+                        end_date: endDate || '',
+                        pic: pic ? pic.trim() : ''
+                    });
+                }
+            });
+            
+            return JSON.stringify(schedule);
+        }
+
+        var modalElementAdd = document.getElementById('modalTambahStep2');
+        modalElementAdd.addEventListener('shown.bs.modal', function() {
+            var container = document.getElementById('schedule-container-add');
+            container.innerHTML = '';
+            addScheduleRowAdd();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btn-add-schedule-add').addEventListener('click', addScheduleRowAdd);
+            
+            document.getElementById('btnSimpanStep2').addEventListener('click', function() {
+                var container = document.getElementById('schedule-container-add');
+                var rows = container.querySelectorAll('.schedule-row');
+                var hasValidRow = false;
+                
+                rows.forEach(function(row) {
+                    var task = row.querySelector('.schedule-task').value;
+                    if (task && task.trim()) {
+                        hasValidRow = true;
+                    }
+                });
+                
+                if (!hasValidRow) {
+                    alert('Harap tambahkan minimal satu kegiatan dengan nama kegiatan.');
+                    return;
+                }
+                
+                var jsonPayload = serializeScheduleAdd();
+                document.getElementById('planning_data_add').value = jsonPayload;
+                
+                var formData = new FormData(document.getElementById('formTambahDataStep2'));
+                
+                fetch('formtambahDataStep2.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(data) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Jadwal berhasil disimpan!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        document.getElementById('formTambahDataStep2').reset();
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep2'));
+                        modal.hide();
+                        location.reload();
+                    });
+                })
+                .catch(function(error) {
+                    alert('Terjadi kesalahan saat menyimpan jadwal.');
+                });
+            });
+        });
+    })();
+    </script>
 
     <div class="modal fade" id="modalEditProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
@@ -1910,29 +2136,39 @@ $results2 = $DB->get_records_sql($query2, $params2);
     })();
     </script>
 
-    <div class="modal fade" id="modalEditStep2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-      <div class="modal-dialog" role="document">
+    <!-- MODAL EDIT STEP 2 - JADWAL PROYEK (INLINE JS) -->
+    <div class="modal fade" id="modalEditStep2" tabindex="-1" role="dialog" aria-labelledby="modalEditStep2Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
               <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
-                  <h5 class="modal-title" id="exampleModalLabel">Edit Penyusunan Indikator</h5>
+                  <h5 class="modal-title" id="modalEditStep2Label">Edit Jadwal Proyek</h5>
               </div>
               <div class="modal-body">
 
-                <div id="editLoad">
-                    <form id="formUbahStep2" method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-light">
-                        <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
-                        <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+                <form id="formUbahStep2" method="POST" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
 
-                        <!-- File Step2 -->
-                        <div class="mb-3">
-                            <label for="step2_pondation" class="form-label">Upload File</label>
-                            <input type="file" id="step2_pondation" name="step2_pondation" 
-                                class="form-control rounded-2 px-3 py-2" 
-                                style="color:#000000;" accept=".pdf">
+                    <!-- Hidden field for final JSON - pre-filled with existing data -->
+                    <textarea name="planning_data" id="planning_data_edit" style="display:none;"><?php echo isset($step->planning_data) ? htmlspecialchars($step->planning_data) : ''; ?></textarea>
+
+                    <!-- Schedule Rows Container -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Jadwal Kegiatan Proyek</label>
+                        <p class="text-muted small mb-2">Edit kegiatan proyek beserta jadwal dan penanggung jawab.</p>
+                        
+                        <!-- Container for schedule rows - class must match JS -->
+                        <div id="schedule-container-edit" class="schedule-container mb-3">
+                            <!-- Rows will be generated by JavaScript based on existing data -->
                         </div>
+                        
+                        <!-- Add button - class must match JS -->
+                        <button type="button" class="btn btn-outline-success btn-sm btn-add-schedule-edit">
+                            <i class="fas fa-plus"></i> Tambah Kegiatan
+                        </button>
+                    </div>
 
-                    </form>
-                </div>
+                </form>
                 
               </div>
               <div class="modal-footer">
@@ -1942,6 +2178,203 @@ $results2 = $DB->get_records_sql($query2, $params2);
           </div>
       </div>
     </div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        function getScheduleRowTemplateEdit(index) {
+            return '<div class="schedule-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #17a2b8 !important;">' +
+                '<div class="d-flex justify-content-between align-items-start mb-2">' +
+                    '<span class="badge bg-info row-number">Kegiatan #' + index + '</span>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-schedule-edit">' +
+                        '<i class="fas fa-trash"></i> Hapus' +
+                    '</button>' +
+                '</div>' +
+                '<div class="mb-2">' +
+                    '<label class="form-label small">Nama Kegiatan</label>' +
+                    '<input type="text" class="form-control schedule-task" placeholder="Contoh: Riset Awal" required>' +
+                '</div>' +
+                '<div class="row mb-2">' +
+                    '<div class="col-md-6">' +
+                        '<label class="form-label small">Tanggal Mulai</label>' +
+                        '<input type="date" class="form-control schedule-start">' +
+                    '</div>' +
+                    '<div class="col-md-6">' +
+                        '<label class="form-label small">Tanggal Selesai</label>' +
+                        '<input type="date" class="form-control schedule-end">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="mb-0">' +
+                    '<label class="form-label small">Penanggung Jawab (PIC)</label>' +
+                    '<input type="text" class="form-control schedule-pic" placeholder="Nama anggota yang bertanggung jawab">' +
+                '</div>' +
+            '</div>';
+        }
+
+        function updateScheduleRowNumbersEdit() {
+            var container = document.getElementById('schedule-container-edit');
+            var rows = container.querySelectorAll('.schedule-row');
+            rows.forEach(function(row, index) {
+                var badge = row.querySelector('.row-number');
+                badge.textContent = 'Kegiatan #' + (index + 1);
+                
+                var deleteBtn = row.querySelector('.btn-remove-schedule-edit');
+                if (rows.length > 1) {
+                    deleteBtn.style.display = '';
+                } else {
+                    deleteBtn.style.display = 'none';
+                }
+            });
+        }
+
+        window.addScheduleRowEdit = function() {
+            var container = document.getElementById('schedule-container-edit');
+            var currentRows = container.querySelectorAll('.schedule-row').length;
+            var newIndex = currentRows + 1;
+            
+            container.insertAdjacentHTML('beforeend', getScheduleRowTemplateEdit(newIndex));
+            updateScheduleRowNumbersEdit();
+            
+            var newRow = container.lastElementChild;
+            var deleteBtn = newRow.querySelector('.btn-remove-schedule-edit');
+            deleteBtn.addEventListener('click', function() {
+                removeScheduleRowEdit(this);
+            });
+        };
+
+        function removeScheduleRowEdit(btn) {
+            var container = document.getElementById('schedule-container-edit');
+            var rows = container.querySelectorAll('.schedule-row');
+            
+            if (rows.length > 1) {
+                var row = btn.closest('.schedule-row');
+                row.remove();
+                updateScheduleRowNumbersEdit();
+            }
+        }
+
+        function serializeScheduleEdit() {
+            var schedule = [];
+            var container = document.getElementById('schedule-container-edit');
+            var rows = container.querySelectorAll('.schedule-row');
+            
+            rows.forEach(function(row) {
+                var task = row.querySelector('.schedule-task').value;
+                var startDate = row.querySelector('.schedule-start').value;
+                var endDate = row.querySelector('.schedule-end').value;
+                var pic = row.querySelector('.schedule-pic').value;
+                
+                if (task && task.trim()) {
+                    schedule.push({
+                        task: task.trim(),
+                        start_date: startDate || '',
+                        end_date: endDate || '',
+                        pic: pic ? pic.trim() : ''
+                    });
+                }
+            });
+            
+            return JSON.stringify(schedule);
+        }
+
+        // Initialize edit modal with existing data on open
+        var modalEditElement = document.getElementById('modalEditStep2');
+        modalEditElement.addEventListener('shown.bs.modal', function() {
+            var container = document.getElementById('schedule-container-edit');
+            var hiddenField = document.getElementById('planning_data_edit');
+            var jsonData = hiddenField.value;
+            
+            container.innerHTML = '';
+            
+            if (jsonData && jsonData.trim()) {
+                try {
+                    var scheduleData = JSON.parse(jsonData);
+                    if (Array.isArray(scheduleData) && scheduleData.length > 0) {
+                        scheduleData.forEach(function(item, index) {
+                            container.insertAdjacentHTML('beforeend', getScheduleRowTemplateEdit(index + 1));
+                            var row = container.querySelectorAll('.schedule-row')[index];
+                            row.querySelector('.schedule-task').value = item.task || '';
+                            row.querySelector('.schedule-start').value = item.start_date || '';
+                            row.querySelector('.schedule-end').value = item.end_date || '';
+                            row.querySelector('.schedule-pic').value = item.pic || '';
+                            
+                            row.querySelector('.btn-remove-schedule-edit').addEventListener('click', function() {
+                                removeScheduleRowEdit(this);
+                            });
+                        });
+                        updateScheduleRowNumbersEdit();
+                        return;
+                    }
+                } catch (e) {
+                    // If JSON parsing fails, show empty row
+                    console.log('Error parsing JSON:', e);
+                }
+            }
+            
+            // If no data or parse error, add empty row
+            addScheduleRowEdit();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnAddEdit = document.querySelector('#modalEditStep2 .btn-add-schedule-edit');
+            if (btnAddEdit) {
+                btnAddEdit.addEventListener('click', addScheduleRowEdit);
+            }
+            
+            var btnSaveEdit = document.getElementById('btnUpdatedStep2');
+            if (btnSaveEdit) {
+                btnSaveEdit.addEventListener('click', function() {
+                    var container = document.getElementById('schedule-container-edit');
+                    var rows = container.querySelectorAll('.schedule-row');
+                    var hasValidRow = false;
+                    
+                    rows.forEach(function(row) {
+                        var task = row.querySelector('.schedule-task').value;
+                        if (task && task.trim()) {
+                            hasValidRow = true;
+                        }
+                    });
+                    
+                    if (!hasValidRow) {
+                        alert('Harap tambahkan minimal satu kegiatan dengan nama kegiatan.');
+                        return;
+                    }
+                    
+                    var jsonPayload = serializeScheduleEdit();
+                    document.getElementById('planning_data_edit').value = jsonPayload;
+                    
+                    var form = document.getElementById('formUbahStep2');
+                    var formData = new FormData(form);
+                    
+                    fetch('formeditDataStep2.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(response) {
+                        return response.text();
+                    })
+                    .then(function(data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Jadwal berhasil diperbarui!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            form.reset();
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalEditStep2'));
+                            modal.hide();
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        alert('Terjadi kesalahan saat menyimpan jadwal.');
+                    });
+                });
+            }
+        });
+    })();
+    </script>
 
     <div class="modal fade" id="modalEditStep6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">

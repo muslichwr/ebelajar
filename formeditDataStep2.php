@@ -7,54 +7,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $group_project = required_param('group_project', PARAM_INT);
     $cmid = required_param('cmid', PARAM_INT);
+    // Accept JSON data directly as raw text - DO NOT decode/encode
+    $planning_data = optional_param('planning_data', '[]', PARAM_RAW);
 
-    $file_destination = null;
+    $coursemodules_records = $DB->get_records('course_modules', ['id' => $cmid]);
+    $coursemodule_record = reset($coursemodules_records);
 
-    $project_records = $DB->get_records('project', ['group_project' => $group_project]);
-    $project_record = reset($project_records);
-
-    if ($_FILES['step2_pondation']['error'] === UPLOAD_ERR_OK) {
-        // Detail file
-        $file_name = $_FILES['step2_pondation']['name'];
-        $file_tmp = $_FILES['step2_pondation']['tmp_name'];
+    if ($coursemodule_record) {
+        $courseid = (int)$coursemodule_record->instance;
         
-        $directory = 'jawaban_step2/';
-        
-        $file_destination = $directory . $file_name;
-        $counter = 1;
+        // CRITICAL: Filter by BOTH ebelajar AND group_project for data isolation
+        $project_records = $DB->get_records('project', [
+            'ebelajar' => $courseid,
+            'group_project' => $group_project
+        ]);
 
-        while (file_exists($file_destination)) {
-            $file_destination = $directory . pathinfo($file_name, PATHINFO_FILENAME) . "($counter)." . pathinfo($file_name, PATHINFO_EXTENSION);
-            $counter++;
+        if ($project_records) {
+            $project_record = reset($project_records);
+            $record = new stdClass();
+            $record->id = $project_record->id;
+            $record->group_project = $group_project;
+            $record->planning_data = $planning_data;
+            $record->updated_at = time();
+
+            if ($DB->update_record('project', $record)) {
+                echo "Data jadwal berhasil diperbarui";
+            } else {
+                echo "Gagal memperbarui data jadwal";  
+            }
+        } else {
+            echo "Tidak ada record project ditemukan untuk kelompok ini.";
         }
-
-        if (!move_uploaded_file($file_tmp, $file_destination)) {
-            print_error("Terjadi kesalahan saat mengunggah file.");
-        }
-
-        if (!empty($project_record->step2_pondation) && file_exists($project_record->step2_pondation)) {
-            unlink($project_record->step2_pondation);
-        }
-    }
-
-    $updated_at = time();
-
-    $project = new stdClass();
-    $project->id = intval($project_record->id); 
-    $project->group_project = intval($group_project);
-    
-    if ($file_destination) {
-        $project->step2_pondation = $file_destination;
     } else {
-        $project->step2_pondation = $project_record->step2_pondation;
+        echo "Record course module tidak ditemukan.";
     }
-
-    if ($DB->update_record('project', $project)) {
-        echo "Data proyek berhasil diperbarui!";
-    } else {
-        print_error("Gagal memperbarui data proyek.");
-    }
-
 } else {
     print_error("Permintaan tidak valid!");
 }
