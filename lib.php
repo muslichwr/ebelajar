@@ -149,3 +149,60 @@ function ebelajar_delete_instance($id) {
 
     return $DB->delete_records('ebelajar', ['id' => $id]);
 }
+
+/**
+ * Serves files for the mod_ebelajar plugin.
+ * This is the "Gatekeeper" function that Moodle calls when accessing pluginfile.php URLs.
+ *
+ * @param stdClass $course The course object
+ * @param stdClass $cm The course module object
+ * @param stdClass $context The context object
+ * @param string $filearea The file area
+ * @param array $args Extra arguments (itemid, filepath, filename)
+ * @param bool $forcedownload Whether to force download
+ * @param array $options Additional options
+ * @return bool|void False if file not found, or serves the file
+ */
+function ebelajar_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+    global $DB;
+
+    // Security: Require login for this course and course module
+    require_login($course, true, $cm);
+
+    // Only serve files from the 'product_evidence' file area
+    if ($filearea !== 'product_evidence') {
+        return false;
+    }
+
+    // Extract the item ID (project ID) from the arguments
+    $itemid = array_shift($args);
+
+    // Reconstruct the file path
+    $filename = array_pop($args);
+    if (!$args) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    // Access the file storage
+    $fs = get_file_storage();
+
+    // Get the file using the "Triangle of Consistency" identifiers
+    $file = $fs->get_file(
+        $context->id,           // Context ID
+        'mod_ebelajar',         // Component
+        'product_evidence',     // File area
+        $itemid,                // Item ID (project ID)
+        $filepath,              // File path
+        $filename               // File name
+    );
+
+    // If the file doesn't exist or is a directory, return false
+    if (!$file || $file->is_directory()) {
+        return false;
+    }
+
+    // Serve the file with caching (1 day = 86400 seconds)
+    send_stored_file($file, 86400, 0, $forcedownload, $options);
+}

@@ -380,6 +380,7 @@ echo '
     </div>
 </div>';
 
+/* DISABLED: Old Step 4 Activity Report (Replaced by Logbook System in Step 3)
 if ($step4_status == "Selesai") {
     foreach ($groups as $group) {
         $user_id = $group->user_id;
@@ -438,36 +439,76 @@ if ($step4_status == "Selesai") {
     </div>
     ';
 }
+END DISABLED OLD STEP 4 */
+
+
 
 echo '
 <div class="container mx-auto p-3" id="dataStep5">
     <div class="row">
         <div class="col-12">' .
-            ($project_data && $step5_status == "Selesai" ? 
-                '<h3>Tahap 5</h3>
+            ($step5_status == "Selesai" && !empty($step->product_data) ? 
+                '<h3>Tahap 5: Pengumpulan Proyek</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Data Project Kelompok Anda</h4>
+                        <h4>Data Proyek Kelompok</h4>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Judul Project:</strong> ' . $project_data->title_project . '</p>
-                        <p><strong>Deskripsi Project:</strong> ' . $project_data->description_project . '</p>' .
-                        (!empty($project_data->file_path) ? 
-                            '<p><strong>File:</strong> <a href="' . $project_data->file_path . '" download>' . basename($project_data->file_path) . '</a></p>' : 
-                            '<p><strong>File:</strong> Tidak ada file yang diunggah.</p>'
-                        ) . 
+                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                        (function() use ($step, $cmid, $DB) {
+                            $product_info = json_decode($step->product_data, true);
+                            $output = '<p><strong>Deskripsi Proyek:</strong></p>';
+                            $output .= '<div class="bg-white p-3 rounded mb-3">' . nl2br(htmlspecialchars($product_info['description'] ?? 'Tidak ada deskripsi.')) . '</div>';
+                            
+                            if (!empty($product_info['youtube_link'])) {
+                                $output .= '<p><strong>Link YouTube:</strong></p>';
+                                $output .= '<p><a href="' . htmlspecialchars($product_info['youtube_link']) . '" target="_blank" class="btn btn-outline-danger btn-sm"><i class="fab fa-youtube"></i> Lihat Video</a></p>';
+                            }
+                            
+                            if (!empty($product_info['filename'])) {
+                                $fs = get_file_storage();
+                                $cm = get_coursemodule_from_id('ebelajar', $cmid, 0, false, MUST_EXIST);
+                                $context = context_module::instance($cm->id);
+                                $file = $fs->get_file(
+                                    $context->id,
+                                    'mod_ebelajar',
+                                    'product_evidence',
+                                    $step->id,
+                                    '/',
+                                    $product_info['filename']
+                                );
+                                if ($file && !$file->is_directory()) {
+                                    $file_url = moodle_url::make_pluginfile_url(
+                                        $context->id,
+                                        'mod_ebelajar',
+                                        'product_evidence',
+                                        $step->id,
+                                        '/',
+                                        $product_info['filename']
+                                    );
+                                    $output .= '<p><strong>File Dokumen Proyek:</strong></p>';
+                                    $output .= '<p><a href="' . $file_url . '" class="btn btn-success btn-sm" download><i class="fas fa-download"></i> Download: ' . htmlspecialchars($product_info['filename']) . '</a></p>';
+                                } else {
+                                    $output .= '<p><strong>File Dokumen Proyek:</strong> File tidak ditemukan.</p>';
+                                }
+                            } else {
+                                $output .= '<p><strong>File Dokumen Proyek:</strong> Tidak ada file yang diunggah.</p>';
+                            }
+                            
+                            $output .= '<p class="text-muted small mt-3"><i class="fas fa-clock"></i> Diunggah: ' . htmlspecialchars($product_info['uploaded_at'] ?? '-') . '</p>';
+                            return $output;
+                        })() .
                     '</div>
                 </div>' :
             ($step5_status == "Mengerjakan" ? 
-                '<h3>Tahap 5</h3>
+                '<h3>Tahap 5: Pengumpulan Proyek</h3>
                 <div class="alert alert-warning">
-                    Kelompok mu belum menambahkan data project. Yuk jikalau sudah selesai silahkan dikumpulkan.
+                    Kelompok ini belum mengumpulkan proyek.
                 </div>' :
-                '<h3>Tahap 5</h3>
+                '<h3>Tahap 5: Pengumpulan Proyek</h3>
                 <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 5.
+                    Kelompok ini belum menyelesaikan tahap 4.
                 </div>'
-            )) . 
+            )) .
         '</div>
     </div>
 </div>';

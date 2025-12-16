@@ -93,6 +93,7 @@ if ($result) {
     $step6_status = null;
 }
 
+/* DISABLED: Old Step 4 Activity Report Query (No longer used)
 $query2 = "
     SELECT ar.*, u.username, u.firstname, u.lastname
     FROM {activity_report} ar
@@ -102,6 +103,7 @@ $query2 = "
 ";
 $params2 = ['groupproject' => $group_project];
 $results2 = $DB->get_records_sql($query2, $params2);
+*/
 
 ?>
 
@@ -1257,6 +1259,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
             </div>
         </div>
 
+        <?php /* DISABLED: Old Step 4 Activity Report (Replaced by Logbook System in Step 3)
         <?php if ($step4_status == "Belum Selesai"): ?>
             <div class="container mx-auto p-3" id="dataStep4">
                 <div class="row">
@@ -1344,44 +1347,102 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </table>
             </div>
         <?php endif; ?>
+        END DISABLED OLD STEP 4 */ ?>
 
 
-        <div class="container mx-auto p-3" id="dataProjectContainer">
+
+        <!-- STEP 5: PRODUCT TESTING (SYNTAX 5) -->
+        <div class="container mx-auto p-3" id="dataStep5">
             <div class="row">
                 <div class="col-12">
-                    <?php if ($project_data && $step5_status == "Selesai"): ?>
-                        <h3>Tahap 5</h3>
+                    <?php 
+                    // Decode product_data JSON from $step
+                    $product_info = null;
+                    if (!empty($step->product_data)) {
+                        $product_info = json_decode($step->product_data, true);
+                    }
+                    
+                    // Check if file exists in Moodle file storage
+                    $product_file_url = null;
+                    $product_filename = null;
+                    if ($product_info && !empty($product_info['filename'])) {
+                        $fs = get_file_storage();
+                        $context = context_module::instance($cmid);
+                        $file = $fs->get_file(
+                            $context->id,
+                            'mod_ebelajar',
+                            'product_evidence',
+                            $step->id,
+                            '/',
+                            $product_info['filename']
+                        );
+                        if ($file && !$file->is_directory()) {
+                            $product_file_url = moodle_url::make_pluginfile_url(
+                                $context->id,
+                                'mod_ebelajar',
+                                'product_evidence',
+                                $step->id,
+                                '/',
+                                $product_info['filename']
+                            );
+                            $product_filename = $product_info['filename'];
+                        }
+                    }
+                    ?>
+                    
+                    <?php if ($step5_status == "Selesai" && $product_info): ?>
+                        <h3>Tahap 5: Pengumpulan Proyek</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditProject"><i class="fas fa-plus"></i> Edit Data Project</button>
+                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-edit"></i> Edit Data Proyek</button>
                         </div>
-                        <!-- Jika ada data, tampilkan dalam card -->
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Data Project Kelompok Anda</h4>
+                                <h4>Data Proyek Kelompok</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Judul Project:</strong> <?php echo $project_data->title_project; ?></p>
-                                <p><strong>Deskripsi Project:</strong> <?php echo $project_data->description_project; ?></p>
+                                <p><strong>Deskripsi Proyek:</strong></p>
+                                <p><?php echo nl2br(htmlspecialchars($product_info['description'] ?? 'Tidak ada deskripsi.')); ?></p>
                                 
-                                <?php if (!empty($project_data->file_path)): ?>
-                                    <p><strong>File:</strong> <a href="<?php echo $project_data->file_path; ?>" download><?php echo basename($project_data->file_path); ?></a></p>
-                                <?php else: ?>
-                                    <p><strong>File:</strong> Tidak ada file yang diunggah.</p>
+                                <?php if (!empty($product_info['youtube_link'])): ?>
+                                <p><strong>Link YouTube:</strong></p>
+                                <p><a href="<?php echo htmlspecialchars($product_info['youtube_link']); ?>" target="_blank" class="btn btn-outline-danger btn-sm">
+                                    <i class="fab fa-youtube"></i> Lihat Video
+                                </a></p>
                                 <?php endif; ?>
+                                
+                                <?php if ($product_file_url): ?>
+                                <p><strong>File Dokumen Proyek:</strong></p>
+                                <p>
+                                    <a href="<?php echo $product_file_url; ?>" class="btn btn-success btn-sm" download>
+                                        <i class="fas fa-download"></i> Download: <?php echo htmlspecialchars($product_filename); ?>
+                                    </a>
+                                </p>
+                                <?php else: ?>
+                                <p><strong>File Dokumen Proyek:</strong> Tidak ada file yang diunggah.</p>
+                                <?php endif; ?>
+                                
+                                <p class="text-muted small mt-3">
+                                    <i class="fas fa-clock"></i> Diunggah: <?php echo htmlspecialchars($product_info['uploaded_at'] ?? '-'); ?>
+                                </p>
                             </div>
                         </div>
                     <?php elseif ($step5_status == "Mengerjakan"): ?>
-                        <h3>Tahap 5</h3>
-                        <?php if ($step5_status == "Mengerjakan"): ?>
-                            <div class="d-flex justify-content-end mb-2">
-                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahProject"><i class="fas fa-plus"></i> Tambah Data Project</button>
+                        <h3>Tahap 5: Pengumpulan Proyek</h3>
+                        <div class="d-flex justify-content-end mb-2">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-plus"></i> Kumpulkan Proyek</button>
+                        </div>
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4>Pengumpulan Proyek</h4>
                             </div>
-                        <?php endif; ?>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menambahkan data project. Yuk jikalau sudah selesai silahkan dikumpulkan.
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle"></i> Silahkan kumpulkan dokumen proyek kelompok Anda (laporan/presentasi/ZIP) beserta deskripsi dan link video (jika ada).
+                                </div>
+                            </div>
                         </div>
                     <?php elseif ($step5_status == "Belum Selesai"): ?>
-                        <h3>Tahap 5</h3>
+                        <h3>Tahap 5: Pengumpulan Proyek</h3>
                         <div class="alert alert-warning">
                             Kelompok mu belum menyelesaikan tahap 4, selesaikan terlebih dahulu tahap 4.
                         </div>
@@ -1488,6 +1549,161 @@ $results2 = $DB->get_records_sql($query2, $params2);
         </div>
     </div>
 
+
+    <!-- MODAL TAMBAH STEP 5 - PRODUCT TESTING (INLINE JS + FILE UPLOAD) -->
+    <div class="modal fade" id="modalTambahStep5" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep5Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="modalTambahStep5Label">Pengumpulan Proyek</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahStep5" method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+
+                    <!-- Deskripsi Produk -->
+                    <div class="mb-3">
+                        <label for="product_description" class="form-label fw-bold">Deskripsi Proyek <span class="text-danger">*</span></label>
+                        <textarea id="product_description" name="product_description" 
+                            class="form-control" 
+                            placeholder="Jelaskan proyek yang telah diselesaikan oleh kelompok Anda..." 
+                            rows="4" required><?php echo htmlspecialchars($product_info['description'] ?? ''); ?></textarea>
+                    </div>
+
+                    <!-- Link YouTube (Optional) -->
+                    <div class="mb-3">
+                        <label for="youtube_link" class="form-label fw-bold">Link Video YouTube (Opsional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fab fa-youtube text-danger"></i></span>
+                            <input type="url" id="youtube_link" name="youtube_link" 
+                                class="form-control" 
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                value="<?php echo htmlspecialchars($product_info['youtube_link'] ?? ''); ?>">
+                        </div>
+                        <small class="text-muted">Masukkan link video YouTube jika ada dokumentasi video proyek.</small>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-3">
+                        <label for="product_file" class="form-label fw-bold">File Dokumen Proyek (Laporan/Presentasi)</label>
+                        <input type="file" id="product_file" name="product_file" 
+                            class="form-control"
+                            accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.ppt,.pptx,.zip,.rar">
+                        <small class="text-muted">Format: JPG, PNG, PDF, DOC, PPT, ZIP (Max: 10MB)</small>
+                        <?php if (!empty($product_info['filename'])): ?>
+                        <div class="mt-2 alert alert-info py-2">
+                            <i class="fas fa-file"></i> File saat ini: <strong><?php echo htmlspecialchars($product_info['filename']); ?></strong>
+                            <br><small>Upload file baru akan menggantikan file lama.</small>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep5" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                      <i class="fas fa-save"></i> Simpan
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    /**
+     * Syntax 5 (Project Submission) - Inline JavaScript
+     * Uses FormData for file upload via AJAX
+     * Following "Zero Latency" Frontend Policy
+     */
+    (function() {
+        'use strict';
+
+        // Global function for saving project submission data with file upload
+        window.saveProductStep5 = function(e) {
+            if (e) e.preventDefault();
+
+            var form = document.getElementById('formTambahStep5');
+            var description = document.getElementById('product_description').value.trim();
+
+            // Validation: Description is required
+            if (!description) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Deskripsi Wajib Diisi',
+                    text: 'Silahkan masukkan deskripsi proyek.'
+                });
+                return;
+            }
+
+            // Use FormData for file upload (DO NOT use serialize())
+            var formData = new FormData(form);
+
+            // Show loading state
+            var btnSave = document.getElementById('btnSimpanStep5');
+            var originalText = btnSave.innerHTML;
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            // AJAX request with FormData
+            fetch('formtambahDataStep5.php', {
+                method: 'POST',
+                body: formData
+                // Note: Do NOT set Content-Type header - browser will set it with boundary
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(data) {
+                console.log('Step 5 Response:', data);
+                
+                // Reset button state
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+
+                if (data.indexOf('Error') === -1 && data.indexOf('error') === -1) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Proyek Berhasil Disimpan!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        // Close modal and reload page
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep5'));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Menyimpan',
+                        text: data
+                    });
+                }
+            })
+            .catch(function(error) {
+                console.error('Step 5 Error:', error);
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: 'Gagal mengirim data. Silahkan coba lagi.'
+                });
+            });
+        };
+
+        // Bind event listener when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnSimpan = document.getElementById('btnSimpanStep5');
+            if (btnSimpan) {
+                btnSimpan.addEventListener('click', window.saveProductStep5);
+            }
+        });
+
+    })();
+    </script>
 
 
     <!-- MODAL TAMBAH STEP 2 - JADWAL PROYEK (INLINE JS) -->

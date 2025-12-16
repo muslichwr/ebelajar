@@ -66,5 +66,23 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121601, 'ebelajar');
     }
 
+    // Upgrade to version 2024121700: Add product_data column for Syntax 5 (Product Testing)
+    if ($oldversion < 2024121700) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field product_data to be added to project
+        $field = new xmldb_field('product_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'logbook_data');
+        
+        // Conditionally add field product_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121700, 'ebelajar');
+    }
+
     return true;
 }

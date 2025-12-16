@@ -30,7 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $record->group_project = $group_project;
             $record->logbook_data = $logbook_data;
             $record->status_step3 = "Selesai";
-            $record->status_step4 = "Mengerjakan";
+            $record->status_step4 = "Selesai";
+            $record->status_step5 = "Mengerjakan";
             $record->updated_at = time();
 
             if ($DB->update_record('project', $record)) {
