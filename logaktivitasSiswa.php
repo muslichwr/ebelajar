@@ -1007,7 +1007,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Penyusunan Jadwal Proyek</h4>
+                                <h4>Perencanaan & Jadwal Proyek</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
                                 <p><strong>Jadwal pelaksanaan proyek kelompok Anda:</strong></p>
@@ -1057,7 +1057,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Penyusunan Jadwal Proyek</h4>
+                                <h4>Perencanaan & Jadwal Proyek</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
                                 <p><strong>Silahkan susun jadwal pelaksanaan proyek kelompok Anda.</strong></p>

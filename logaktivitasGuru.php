@@ -266,7 +266,7 @@ echo '
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Penyusunan Jadwal Proyek</h4>
+                        <h4>Perencanaan & Jadwal Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
                         <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
@@ -277,7 +277,7 @@ echo '
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Penyusunan Jadwal Proyek</h4>
+                        <h4>Perencanaan & Jadwal Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
                         <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
