@@ -263,7 +263,7 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step2_status == "Selesai" ? 
-                '<h3>Tahap 2</h3>
+                '<h3>Tahap 2 dan Tahap 3</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
                         <h4>Perencanaan & Jadwal Proyek</h4>
@@ -274,7 +274,7 @@ echo '
                     </div>
                 </div>' : 
             ($step2_status == "Mengerjakan" ? 
-                '<h3>Tahap 2</h3>
+                '<h3>Tahap 2 dan Tahap 3</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
                         <h4>Perencanaan & Jadwal Proyek</h4>
@@ -284,9 +284,96 @@ echo '
                         ' . $schedule_html . '
                     </div>
                 </div>' :
-                '<h3>Tahap 2</h3>
+                '<h3>Tahap 2 dan Tahap 3</h3>
                 <div class="alert alert-warning">
                     Kelompok ini belum menyelesaikan tahap 2.
+                </div>'
+            )) . 
+        '</div>
+    </div>
+</div>';
+
+// Build logbook HTML for Tahap 3
+$logbook_html = '';
+if (!empty($step->logbook_data)) {
+    $logbook_entries = json_decode($step->logbook_data, true);
+    if (is_array($logbook_entries) && count($logbook_entries) > 0) {
+        $logbook_html = '
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped bg-white">
+                <thead class="table-success">
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 12%;">Tanggal</th>
+                        <th style="width: 35%;">Kegiatan</th>
+                        <th style="width: 25%;">Kendala</th>
+                        <th style="width: 10%;">Progres</th>
+                        <th style="width: 13%;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        foreach ($logbook_entries as $index => $entry) {
+            $progress = $entry['progress'] ?? 0;
+            if ($progress >= 100) {
+                $status_badge = '<span class="badge bg-success">Selesai</span>';
+            } elseif ($progress >= 50) {
+                $status_badge = '<span class="badge bg-warning text-dark">Progres</span>';
+            } else {
+                $status_badge = '<span class="badge bg-secondary">Mulai</span>';
+            }
+            
+            $logbook_html .= '
+                    <tr>
+                        <td class="text-center">' . ($index + 1) . '</td>
+                        <td>' . htmlspecialchars($entry['date'] ?? '') . '</td>
+                        <td>' . nl2br(htmlspecialchars($entry['activity'] ?? '')) . '</td>
+                        <td>' . nl2br(htmlspecialchars($entry['obstacles'] ?? '-')) . '</td>
+                        <td class="text-center"><span class="badge ' . ($progress >= 100 ? 'bg-success' : 'bg-info') . '">' . htmlspecialchars($progress) . '%</span></td>
+                        <td>' . $status_badge . '</td>
+                    </tr>';
+        }
+        
+        $logbook_html .= '
+                </tbody>
+            </table>
+        </div>';
+    } else {
+        $logbook_html = '<div class="alert alert-info">Belum ada catatan logbook.</div>';
+    }
+} else {
+    $logbook_html = '<div class="alert alert-info">Belum ada catatan logbook.</div>';
+}
+
+echo '
+<div class="container mx-auto p-3" id="dataStep3">
+    <div class="row">
+        <div class="col-12">' .
+            ($step3_status == "Selesai" ? 
+                '<h3>Tahap 4</h3>
+                <div class="card">
+                    <div class="card-header text-white" style="background-color: var(--custom-green);">
+                        <h4>Logbook Pelaksanaan Proyek</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--custom-blue);">
+                        <p><strong>Catatan harian pelaksanaan proyek kelompok:</strong></p>
+                        ' . $logbook_html . '
+                    </div>
+                </div>' : 
+            ($step3_status == "Mengerjakan" ? 
+                '<h3>Tahap 4</h3>
+                <div class="card">
+                    <div class="card-header text-white" style="background-color: var(--custom-green);">
+                        <h4>Logbook Pelaksanaan Proyek</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--custom-blue);">
+                        <p><strong>Catatan harian pelaksanaan proyek kelompok:</strong></p>
+                        ' . $logbook_html . '
+                    </div>
+                </div>' :
+                '<h3>Tahap 4</h3>
+                <div class="alert alert-warning">
+                    Kelompok ini belum menyelesaikan tahap 3.
                 </div>'
             )) . 
         '</div>

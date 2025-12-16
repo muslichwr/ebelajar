@@ -1001,7 +1001,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
             <div class="row">
                 <div class="col-12">
                     <?php if ($step2_status == "Selesai"): ?>
-                        <h3>Tahap 2</h3>
+                        <h3>Tahap 2 dan Tahap 3</h3>
                         <div class="d-flex justify-content-end mb-2">
                             <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep2"><i class="fas fa-edit"></i> Edit Jadwal Proyek</button>
                         </div>
@@ -1051,7 +1051,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Mengerjakan"): ?>
-                        <h3>Tahap 2</h3>
+                        <h3>Tahap 2 dan Tahap 3</h3>
                         <div class="d-flex justify-content-end mb-2">
                             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep2"><i class="fas fa-plus"></i> Tambah Jadwal Proyek</button>
                         </div>
@@ -1101,7 +1101,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Belum Selesai"): ?>
-                        <h3>Tahap 2</h3>
+                        <h3>Tahap 2 dan Tahap 3</h3>
                         <div class="alert alert-warning">
                             Kelompok mu belum menyelesaikan tahap 1, selesaikan terlebih dahulu tahap 1.
                         </div>
@@ -1113,27 +1113,141 @@ $results2 = $DB->get_records_sql($query2, $params2);
         <div class="container mx-auto p-3" id="dataStep3">
             <div class="row">
                 <div class="col-12">
-                    <?php if ($step3_schedule_image && $step3_schedule_file != null && $step3_status == "Selesai"): ?>
-                        <h3>Tahap 3</h3>
-                        <!-- Jika ada data, tampilkan dalam card -->
+                    <?php if ($step3_status == "Selesai"): ?>
+                        <h3>Tahap 4</h3>
+                        <div class="d-flex justify-content-end mb-2">
+                            <button class="btn text-white" style="background-color: var(--custom-green);" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus"></i> Tambah Catatan Logbook</button>
+                        </div>
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Jadwal Proyek Untuk Siswa</h4>
+                                <h4>Logbook Pelaksanaan Proyek</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <img src="<?php echo(new moodle_url('/mod/ebelajar/' . $step3_schedule_image))->out(); ?>" alt="gambar jadwal perencanaan" class="d-block mx-auto w-50 h-50">
-                                <?php if (!empty($step3_schedule_file)): ?>
-                                    <p><strong>File:</strong> <a href="<?php echo $step3_schedule_file; ?>" download><?php echo basename($step3_schedule_file); ?></a></p>
-                                <?php else: ?>
-                                    <p><strong>File:</strong> Tidak ada file yang diunggah.</p>
-                                <?php endif; ?>
+                                <p><strong>Catatan harian pelaksanaan proyek kelompok Anda:</strong></p>
+                                <?php 
+                                if (!empty($step->logbook_data)) {
+                                    $logbook_entries = json_decode($step->logbook_data, true);
+                                    if (is_array($logbook_entries) && count($logbook_entries) > 0):
+                                ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped bg-white">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th style="width: 5%;">No</th>
+                                                <th style="width: 12%;">Tanggal</th>
+                                                <th style="width: 35%;">Kegiatan</th>
+                                                <th style="width: 25%;">Kendala</th>
+                                                <th style="width: 10%;">Progres</th>
+                                                <th style="width: 13%;">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($logbook_entries as $idx => $entry): ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo ($idx + 1); ?></td>
+                                                <td><?php echo htmlspecialchars($entry['date'] ?? ''); ?></td>
+                                                <td><?php echo nl2br(htmlspecialchars($entry['activity'] ?? '')); ?></td>
+                                                <td><?php echo nl2br(htmlspecialchars($entry['obstacles'] ?? '-')); ?></td>
+                                                <td class="text-center">
+                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-success' : 'bg-info'; ?>">
+                                                        <?php echo htmlspecialchars($entry['progress'] ?? 0); ?>%
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <?php 
+                                                    $progress = $entry['progress'] ?? 0;
+                                                    if ($progress >= 100) {
+                                                        echo '<span class="badge bg-success">Selesai</span>';
+                                                    } elseif ($progress >= 50) {
+                                                        echo '<span class="badge bg-warning text-dark">Progres</span>';
+                                                    } else {
+                                                        echo '<span class="badge bg-secondary">Mulai</span>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php 
+                                    else:
+                                        echo '<div class="alert alert-info">Belum ada catatan logbook.</div>';
+                                    endif;
+                                } else {
+                                    echo '<div class="alert alert-info">Belum ada catatan logbook. Klik tombol "Tambah Catatan Logbook" untuk memulai.</div>';
+                                }
+                                ?>
                             </div>
                         </div>
-                    <?php elseif ($step3_schedule_image && $step3_schedule_file == null && $step3_status == "Mengerjakan"): ?>
-                        <div class="alert alert-warning">
-                            Guru belum menambahkan perjadwalan! harap tunggu sebentar atau silahkan menghubungi guru.
+                    <?php elseif ($step3_status == "Mengerjakan"): ?>
+                        <h3>Tahap 3</h3>
+                        <div class="d-flex justify-content-end mb-2">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus"></i> Tambah Catatan Logbook</button>
                         </div>
-                    <?php else: ?>
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4>Logbook Pelaksanaan Proyek</h4>
+                            </div>
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <p><strong>Silahkan catat progres pelaksanaan proyek kelompok Anda:</strong></p>
+                                <?php 
+                                if (!empty($step->logbook_data)) {
+                                    $logbook_entries = json_decode($step->logbook_data, true);
+                                    if (is_array($logbook_entries) && count($logbook_entries) > 0):
+                                ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped bg-white">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th style="width: 5%;">No</th>
+                                                <th style="width: 12%;">Tanggal</th>
+                                                <th style="width: 35%;">Kegiatan</th>
+                                                <th style="width: 25%;">Kendala</th>
+                                                <th style="width: 10%;">Progres</th>
+                                                <th style="width: 13%;">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($logbook_entries as $idx => $entry): ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo ($idx + 1); ?></td>
+                                                <td><?php echo htmlspecialchars($entry['date'] ?? ''); ?></td>
+                                                <td><?php echo nl2br(htmlspecialchars($entry['activity'] ?? '')); ?></td>
+                                                <td><?php echo nl2br(htmlspecialchars($entry['obstacles'] ?? '-')); ?></td>
+                                                <td class="text-center">
+                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-success' : 'bg-info'; ?>">
+                                                        <?php echo htmlspecialchars($entry['progress'] ?? 0); ?>%
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <?php 
+                                                    $progress = $entry['progress'] ?? 0;
+                                                    if ($progress >= 100) {
+                                                        echo '<span class="badge bg-success">Selesai</span>';
+                                                    } elseif ($progress >= 50) {
+                                                        echo '<span class="badge bg-warning text-dark">Progres</span>';
+                                                    } else {
+                                                        echo '<span class="badge bg-secondary">Mulai</span>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php 
+                                    else:
+                                        echo '<div class="alert alert-warning">Belum ada catatan logbook. Klik tombol "Tambah Catatan Logbook" untuk memulai.</div>';
+                                    endif;
+                                } else {
+                                    echo '<div class="alert alert-warning">Belum ada catatan logbook. Klik tombol "Tambah Catatan Logbook" untuk memulai.</div>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    <?php elseif ($step3_status == "Belum Selesai"): ?>
                         <h3>Tahap 3</h3>
                         <div class="alert alert-warning">
                             Kelompok mu belum menyelesaikan tahap 2, selesaikan terlebih dahulu tahap 2.
@@ -2369,6 +2483,169 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     })
                     .catch(function(error) {
                         alert('Terjadi kesalahan saat menyimpan jadwal.');
+                    });
+                });
+            }
+        });
+    })();
+    </script>
+
+    <!-- MODAL TAMBAH STEP 3 - LOGBOOK PELAKSANAAN (INLINE JS) -->
+    <div class="modal fade" id="modalTambahStep3" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep3Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="modalTambahStep3Label">Tambah Catatan Logbook</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahDataStep3" method="POST" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+
+                    <!-- Hidden field for final JSON (full array with appended entry) -->
+                    <textarea name="logbook_data" id="logbook_data_hidden" style="display:none;"><?php echo isset($step->logbook_data) ? htmlspecialchars($step->logbook_data) : '[]'; ?></textarea>
+
+                    <!-- Logbook Entry Form -->
+                    <div class="mb-3">
+                        <label for="logbook_date" class="form-label fw-bold">Tanggal Kegiatan <span class="text-danger">*</span></label>
+                        <input type="date" id="logbook_date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="logbook_activity" class="form-label fw-bold">Kegiatan yang Dilakukan <span class="text-danger">*</span></label>
+                        <textarea id="logbook_activity" class="form-control" rows="3" placeholder="Contoh: Melakukan riset awal, menyusun outline proposal, dll." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="logbook_obstacles" class="form-label fw-bold">Kendala / Hambatan</label>
+                        <textarea id="logbook_obstacles" class="form-control" rows="2" placeholder="Contoh: Sulit menemukan referensi, keterbatasan waktu, dll. Isi dengan '-' jika tidak ada kendala."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="logbook_progress" class="form-label fw-bold">Progres Keseluruhan (%) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="logbook_progress" class="form-control" min="0" max="100" value="0" required>
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <small class="text-muted">Perkiraan progres total proyek setelah kegiatan ini (0-100%)</small>
+                    </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep3" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        // Get existing logbook data from PHP (hydrated on page load)
+        var existingLogbookData = [];
+        try {
+            var hiddenField = document.getElementById('logbook_data_hidden');
+            if (hiddenField && hiddenField.value && hiddenField.value.trim()) {
+                existingLogbookData = JSON.parse(hiddenField.value);
+                if (!Array.isArray(existingLogbookData)) {
+                    existingLogbookData = [];
+                }
+            }
+        } catch (e) {
+            console.log('Error parsing existing logbook data:', e);
+            existingLogbookData = [];
+        }
+
+        // Reset form when modal opens
+        var modalElementStep3 = document.getElementById('modalTambahStep3');
+        if (modalElementStep3) {
+            modalElementStep3.addEventListener('shown.bs.modal', function() {
+                document.getElementById('logbook_date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('logbook_activity').value = '';
+                document.getElementById('logbook_obstacles').value = '';
+                document.getElementById('logbook_progress').value = existingLogbookData.length > 0 
+                    ? (existingLogbookData[existingLogbookData.length - 1].progress || 0)
+                    : 0;
+            });
+        }
+
+        // Add logbook entry function (APPEND MODE)
+        window.addLogbookEntry = function() {
+            var dateVal = document.getElementById('logbook_date').value;
+            var activityVal = document.getElementById('logbook_activity').value.trim();
+            var obstaclesVal = document.getElementById('logbook_obstacles').value.trim() || '-';
+            var progressVal = parseInt(document.getElementById('logbook_progress').value) || 0;
+
+            // Validation
+            if (!dateVal) {
+                alert('Harap isi tanggal kegiatan.');
+                return false;
+            }
+            if (!activityVal) {
+                alert('Harap isi kegiatan yang dilakukan.');
+                return false;
+            }
+            if (progressVal < 0 || progressVal > 100) {
+                alert('Progres harus antara 0-100%.');
+                return false;
+            }
+
+            // Create new entry
+            var newEntry = {
+                date: dateVal,
+                activity: activityVal,
+                obstacles: obstaclesVal,
+                progress: progressVal,
+                created_at: new Date().toISOString()
+            };
+
+            // Append to existing data (CRUCIAL: APPEND MODE)
+            existingLogbookData.push(newEntry);
+
+            // Update hidden field with FULL array
+            document.getElementById('logbook_data_hidden').value = JSON.stringify(existingLogbookData);
+
+            return true;
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnSaveStep3 = document.getElementById('btnSimpanStep3');
+            if (btnSaveStep3) {
+                btnSaveStep3.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Add entry to array and serialize
+                    if (!addLogbookEntry()) {
+                        return;
+                    }
+                    
+                    var formData = new FormData(document.getElementById('formTambahDataStep3'));
+                    
+                    fetch('formtambahDataStep3.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(response) {
+                        return response.text();
+                    })
+                    .then(function(data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Catatan logbook berhasil disimpan!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep3'));
+                            modal.hide();
+                            location.reload();
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menyimpan logbook.');
                     });
                 });
             }

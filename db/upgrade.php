@@ -48,5 +48,23 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121600, 'ebelajar');
     }
 
+    // Upgrade to version 2024121601: Add logbook_data column for Syntax 4 (Logbook Pelaksanaan)
+    if ($oldversion < 2024121601) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field logbook_data to be added to project
+        $field = new xmldb_field('logbook_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'planning_data');
+        
+        // Conditionally add field logbook_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121601, 'ebelajar');
+    }
+
     return true;
 }

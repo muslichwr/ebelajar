@@ -216,7 +216,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
         <div class="row">
             <div class="col-12">
                 <?php if ($step3_schedule_image && $step3_schedule_file != null && $step3_status == "Selesai"): ?>
-                    <h3>Tahap 3</h3>
+                    <h3>Tahap 4</h3>
                     <!-- Jika ada data, tampilkan dalam card -->
                     <div class="card">
                         <div class="card-header text-white" style="background-color: var(--custom-green);">
@@ -236,7 +236,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         Guru belum menambahkan perjadwalan! harap tunggu sebentar atau silahkan menghubungi guru.
                     </div>
                 <?php else: ?>
-                    <h3>Tahap 3</h3>
+                    <h3>Tahap 4</h3>
                     <div class="alert alert-warning">
                         Kelompok ini belum menyelesaikan tahap 3.
                     </div>

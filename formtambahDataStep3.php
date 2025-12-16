@@ -5,81 +5,41 @@ require_login();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     global $DB;
 
-    $cmid = required_param('id', PARAM_INT);
-
-    // File handling
-    if ($_FILES['file_step3']['error'] !== UPLOAD_ERR_OK) {
-        print_error("Terjadi kesalahan saat mengunggah file: " . $_FILES['file_step3']['error']);
-    }
-
-    // File details
-    $file_name1 = $_FILES['file_step3']['name'];
-    $file_tmp1 = $_FILES['file_step3']['tmp_name'];
+    $group_project = required_param('group_project', PARAM_INT);
+    $cmid = required_param('cmid', PARAM_INT);
+    // Accept JSON data directly as raw text - contains full array with appended entry
+    $logbook_data = optional_param('logbook_data', '[]', PARAM_RAW);
 
     $coursemodules_records = $DB->get_records('course_modules', ['id' => $cmid]);
     
     $coursemodule_record = reset($coursemodules_records); 
 
-    $count = $DB->count_records('ebelajar', ['coursemoduleid' => $cmid]);
-
-    if ($count > 0) {
-        $file_destination1 = 'jadwal_file/' . ($count + 1) . '_' . $file_name1;
-    } else {
-        $file_destination1 = 'jadwal_file/' . $file_name1;
-    }
-
-    // Validasi ekstensi file
-    $file_extension1 = strtolower(pathinfo($file_name1, PATHINFO_EXTENSION));
-
-    // Pindahkan file ke destinasi yang ditentukan
-    if (!move_uploaded_file($file_tmp1, $file_destination1)) {
-        print_error("Terjadi kesalahan saat mengunggah file.");
-    }
-
-    if ($_FILES['file_image']['error'] !== UPLOAD_ERR_OK) {
-        print_error("Terjadi kesalahan saat mengunggah file: " . $_FILES['file_image']['error']);
-    }
-
-    // File details
-    $file_name2 = $_FILES['file_image']['name'];
-    $file_tmp2 = $_FILES['file_image']['tmp_name'];
-
-    if ($count > 0) {
-        $file_destination2 = 'jadwal_image/' . ($count + 1) . '_' . $file_name2;
-    } else {
-        $file_destination2 = 'jadwal_image/' . $file_name2;
-    }
-
-    // Validasi ekstensi file
-    $file_extension2 = strtolower(pathinfo($file_name2, PATHINFO_EXTENSION));
-
-    // Pindahkan file ke destinasi yang ditentukan
-    if (!move_uploaded_file($file_tmp2, $file_destination2)) {
-        print_error("Terjadi kesalahan saat mengunggah file.");
-    }
-
-    $created_at = time();
-    $updated_at = $created_at;
-
     if ($coursemodule_record) {
         $courseid = (int)$coursemodule_record->instance;
-        $ebelajar_records = $DB->get_records('ebelajar', ['id' => $courseid]);  
         
-        if ($ebelajar_records) {
-            $ebelajar_record = reset($ebelajar_records);
-            $record = new stdClass();
-            $record->id = $ebelajar_record->id;
-            $record->step3_schedule_image = $file_destination2;
-            $record->step3_schedule_file = $file_destination1;
-            $record->updated_at = $updated_at;
+        // CRITICAL: Filter by BOTH ebelajar AND group_project for data isolation
+        $project_records = $DB->get_records('project', [
+            'ebelajar' => $courseid,
+            'group_project' => $group_project
+        ]);
 
-            if ($DB->update_record('ebelajar', $record)) {
-                echo "Data berhasil ditambahkan ke tabel ebelajar";
+        if ($project_records) {
+            $project_record = reset($project_records);
+            $record = new stdClass();
+            $record->id = $project_record->id;
+            $record->group_project = $group_project;
+            $record->logbook_data = $logbook_data;
+            $record->status_step3 = "Selesai";
+            $record->status_step4 = "Mengerjakan";
+            $record->updated_at = time();
+
+            if ($DB->update_record('project', $record)) {
+                echo "Logbook berhasil disimpan";
             } else {
-                echo "Gagal menambahkan data";  
+                echo "Gagal menyimpan logbook";  
             }
         } else {
-            echo "Tidak ada record ebelajar ditemukan.";
+            echo "Tidak ada record project ditemukan untuk kelompok ini.";
         }
     } else {
         echo "Record course module tidak ditemukan.";
