@@ -224,7 +224,7 @@ echo '
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Penyusunan Indikator</h4>
+                        <h4>Rancangan Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
                         <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
@@ -240,7 +240,7 @@ echo '
                 '<h3>Tahap 2</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Penyusunan Indikator</h4>
+                        <h4>Rancangan Proyek</h4>
                     </div>
                     <div class="card-body" style="background-color: var(--custom-blue);">
                         <p><strong>Silahkan anda menambahkan terkait data untuk membuat sebuah pondasi dari kelompok dan upload filenya berupa pdf.</strong></p>
