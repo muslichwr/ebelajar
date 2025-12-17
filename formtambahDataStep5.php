@@ -81,6 +81,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Preserve existing data when editing (if no new file uploaded)
+    $existing_data = [];
+    if (!empty($project->product_data)) {
+        $existing_data = json_decode($project->product_data, true);
+    }
+    
+    // If no new file uploaded, keep the old filename
+    if ($filename === null && !empty($existing_data['filename'])) {
+        $filename = $existing_data['filename'];
+    }
+
     // Build JSON metadata for product_data column
     $product_data = [
         'description' => $description,

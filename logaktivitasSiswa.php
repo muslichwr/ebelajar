@@ -528,6 +528,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
     });
     </script>
 
+    <!-- OLD STEP 6 HANDLER REMOVED: Was checking for 'evaluation' field that no longer exists
+         This was causing "Harap lengkapi semua bidang" error when editing presentations.
+         New handler is in modalTambahStep6 inline script using window.savePresentationStep6()
     <script>
     $(document).ready(function() {
         $('#btnSimpanStep6').click(function() {
@@ -538,34 +541,11 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 alert("Harap lengkapi semua bidang.");
                 return;
             }
-            
-            $.ajax({
-                url: 'formtambahDataStep6.php',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    console.log(response);                   
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Data berhasil disimpan!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        // Setelah SweetAlert ditutup, tutup modal
-                        $('#formTambahDataStep6')[0].reset();
-                        $('#modalTambahStep6').modal('hide');
-                        location.reload();
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log("Terjadi kesalahan: " + error);
-                }
-            });
+            ... OLD CODE REMOVED ...
         });
     });
     </script>
+    -->
 
 
     <script>
@@ -1451,33 +1431,103 @@ $results2 = $DB->get_records_sql($query2, $params2);
             </div>
         </div>
 
+        <!-- STEP 6: PRESENTASI PROYEK (SYNTAX 6) -->
         <div class="container mx-auto p-3" id="dataStep6">
             <div class="row">
                 <div class="col-12">
-                    <?php if ($project_data && $step6_status == "Selesai"): ?>
-                        <h3>Tahap 6</h3>
+                    <?php
+                    // Decode presentation_data JSON
+                    $presentation_info = [];
+                    if (!empty($step->presentation_data)) {
+                        $presentation_info = json_decode($step->presentation_data, true);
+                    }
+                    
+                    // Get file URL if exists
+                    $presentation_file_url = null;
+                    $presentation_filename = '';
+                    if (!empty($presentation_info['filename'])) {
+                        $fs = get_file_storage();
+                        $file = $fs->get_file(
+                            $context->id,
+                            'mod_ebelajar',
+                            'presentation_file',
+                            $step->id,
+                            '/',
+                            $presentation_info['filename']
+                        );
+                        if ($file && !$file->is_directory()) {
+                            $presentation_file_url = moodle_url::make_pluginfile_url(
+                                $context->id,
+                                'mod_ebelajar',
+                                'presentation_file',
+                                $step->id,
+                                '/',
+                                $presentation_info['filename']
+                            );
+                            $presentation_filename = $presentation_info['filename'];
+                        }
+                    }
+                    ?>
+                    
+                    <?php if ($step6_status == "Selesai" && $presentation_info): ?>
+                        <h3>Tahap 6: Presentasi Proyek</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep6"><i class="fas fa-plus"></i> Edit Evaluasi</button>
+                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-edit"></i> Edit Presentasi</button>
                         </div>
-                        <!-- Jika ada data, tampilkan dalam card -->
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Data Evaluasi Kelompokmu</h4>
+                                <h4>Data Presentasi Kelompok</h4>
                             </div>
                             <div class="card-body" style="background-color: var(--custom-blue);">
-                                <p><strong>Evaluasi:</strong> <?php echo $project_data->evaluation; ?></p>
+                                <?php if (!empty($presentation_info['link_presentation'])): ?>
+                                <p><strong>Link Presentasi (Canva/Google Slides):</strong></p>
+                                <p>
+                                    <a href="<?php echo htmlspecialchars($presentation_info['link_presentation']); ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Buka Presentasi
+                                    </a>
+                                </p>
+                                <?php endif; ?>
+                                
+                                <?php if ($presentation_file_url): ?>
+                                <p><strong>File Presentasi:</strong></p>
+                                <p>
+                                    <a href="<?php echo $presentation_file_url; ?>" class="btn btn-success btn-sm" download>
+                                        <i class="fas fa-download"></i> Download: <?php echo htmlspecialchars($presentation_filename); ?>
+                                    </a>
+                                </p>
+                                <?php elseif (!empty($presentation_info['filename'])): ?>
+                                <p><strong>File Presentasi:</strong> File tidak ditemukan.</p>
+                                <?php else: ?>
+                                <p><strong>File Presentasi:</strong> Tidak ada file yang diunggah.</p>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($presentation_info['notes'])): ?>
+                                <p><strong>Catatan Tambahan:</strong></p>
+                                <div class="bg-white p-3 rounded mb-3"><?php echo nl2br(htmlspecialchars($presentation_info['notes'])); ?></div>
+                                <?php endif; ?>
+                                
+                                <p class="text-muted small mt-3">
+                                    <i class="fas fa-clock"></i> Diunggah: <?php echo htmlspecialchars($presentation_info['uploaded_at'] ?? '-'); ?>
+                                </p>
                             </div>
                         </div>
                     <?php elseif ($step6_status == "Mengerjakan"): ?>
-                        <h3>Tahap 6</h3>
+                        <h3>Tahap 6: Presentasi Proyek</h3>
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-plus"></i> Tambah Data Evaluasi</button>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-plus"></i> Kumpulkan Presentasi</button>
                         </div>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menambahkan evaluasi. Yuk jikalau sudah selesai silahkan dikumpulkan.
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4>Presentasi Proyek</h4>
+                            </div>
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle"></i> Silahkan kumpulkan materi presentasi kelompok Anda (PPT/PDF) atau link presentasi online (Canva/Google Slides).
+                                </div>
+                            </div>
                         </div>
                     <?php elseif ($step6_status == "Belum Selesai"): ?>
-                        <h3>Tahap 6</h3>
+                        <h3>Tahap 6: Presentasi Proyek</h3>
                         <div class="alert alert-warning">
                             Kelompok mu belum menyelesaikan tahap 5, selesaikan terlebih dahulu tahap 5.
                         </div>
@@ -1699,6 +1749,166 @@ $results2 = $DB->get_records_sql($query2, $params2);
             var btnSimpan = document.getElementById('btnSimpanStep5');
             if (btnSimpan) {
                 btnSimpan.addEventListener('click', window.saveProductStep5);
+            }
+        });
+
+    })();
+    </script>
+
+
+    <!-- MODAL TAMBAH STEP 6 - PRESENTASI PROYEK (INLINE JS + FILE UPLOAD) -->
+    <div class="modal fade" id="modalTambahStep6" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep6Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="modalTambahStep6Label">Presentasi Proyek</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahStep6" method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+
+                    <!-- Link Presentasi (Optional) -->
+                    <div class="mb-3">
+                        <label for="link_presentation" class="form-label fw-bold">Link Presentasi Online (Canva/Google Slides/Prezi)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-link text-primary"></i></span>
+                            <input type="url" id="link_presentation" name="link_presentation" 
+                                class="form-control" 
+                                placeholder="https://www.canva.com/design/...">
+                        </div>
+                        <small class="text-muted">Masukkan link presentasi online jika ada (Canva, Google Slides, Prezi, dll).</small>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-3">
+                        <label for="presentation_file" class="form-label fw-bold">File Presentasi (PPT/PDF)</label>
+                        <input type="file" id="presentation_file" name="presentation_file" 
+                            class="form-control"
+                            accept=".ppt,.pptx,.pdf,.doc,.docx,.jpg,.jpeg,.png,.zip">
+                        <small class="text-muted">Format: PPT, PPTX, PDF, DOC, JPG, PNG, ZIP (Max: 10MB)</small>
+                        <?php if (!empty($presentation_info['filename'])): ?>
+                        <div class="mt-2 alert alert-info py-2">
+                            <i class="fas fa-file"></i> File saat ini: <strong><?php echo htmlspecialchars($presentation_info['filename']); ?></strong>
+                            <br><small>Upload file baru akan menggantikan file lama.</small>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Catatan Tambahan -->
+                    <div class="mb-3">
+                        <label for="notes" class="form-label fw-bold">Catatan Tambahan (Opsional)</label>
+                        <textarea id="notes" name="notes" 
+                            class="form-control" 
+                            placeholder="Tambahkan catatan untuk presentasi jika diperlukan..." 
+                            rows="3"><?php echo htmlspecialchars($presentation_info['notes'] ?? ''); ?></textarea>
+                    </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep6" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                      <i class="fas fa-save"></i> Simpan
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    /**
+     * Syntax 6 (Presentation Submission) - Inline JavaScript
+     * Uses FormData for file upload via AJAX
+     * Following "Zero Latency" Frontend Policy
+     */
+    (function() {
+        'use strict';
+
+        // Global function for saving presentation data with file upload
+        window.savePresentationStep6 = function(e) {
+            if (e) e.preventDefault();
+
+        var form = document.getElementById('formTambahStep6');
+            var linkPresentation = document.getElementById('link_presentation').value.trim();
+            var fileInput = document.getElementById('presentation_file');
+
+            // Check if we're in edit mode (existing file indicator is shown)
+            var existingFileAlert = document.querySelector('#modalTambahStep6 .alert-info');
+            var isEditMode = existingFileAlert !== null;
+
+            // Validation: For new submission, require link OR file. For edit mode, allow any update.
+            if (!isEditMode && !linkPresentation && (!fileInput.files || fileInput.files.length === 0)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data Tidak Lengkap',
+                    text: 'Silahkan masukkan link presentasi atau upload file presentasi.'
+                });
+                return;
+            }
+
+            // Use FormData for file upload (DO NOT use serialize())
+            var formData = new FormData(form);
+
+            // Show loading state
+            var btnSave = document.getElementById('btnSimpanStep6');
+            var originalText = btnSave.innerHTML;
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            // AJAX request with FormData
+            fetch('formtambahDataStep6.php', {
+                method: 'POST',
+                body: formData
+                // Note: Do NOT set Content-Type header - browser will set it with boundary
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(data) {
+                console.log('Step 6 Response:', data);
+                
+                // Reset button state
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+
+                if (data.indexOf('Error') === -1 && data.indexOf('error') === -1) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Presentasi Berhasil Disimpan!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        // Close modal and reload page
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep6'));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Menyimpan',
+                        text: data
+                    });
+                }
+            })
+            .catch(function(error) {
+                console.error('Step 6 Error:', error);
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: 'Gagal mengirim data. Silahkan coba lagi.'
+                });
+            });
+        };
+
+        // Bind event listener when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnSimpan = document.getElementById('btnSimpanStep6');
+            if (btnSimpan) {
+                btnSimpan.addEventListener('click', window.savePresentationStep6);
             }
         });
 

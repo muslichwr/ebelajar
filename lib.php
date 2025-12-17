@@ -169,8 +169,11 @@ function ebelajar_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     // Security: Require login for this course and course module
     require_login($course, true, $cm);
 
-    // Only serve files from the 'product_evidence' file area
-    if ($filearea !== 'product_evidence') {
+    // Allowed file areas for this plugin
+    $allowed_areas = ['product_evidence', 'presentation_file'];
+    
+    // Only serve files from allowed file areas
+    if (!in_array($filearea, $allowed_areas)) {
         return false;
     }
 
@@ -192,7 +195,7 @@ function ebelajar_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     $file = $fs->get_file(
         $context->id,           // Context ID
         'mod_ebelajar',         // Component
-        'product_evidence',     // File area
+        $filearea,              // File area (dynamic: product_evidence or presentation_file)
         $itemid,                // Item ID (project ID)
         $filepath,              // File path
         $filename               // File name

@@ -84,5 +84,23 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121700, 'ebelajar');
     }
 
+    // Upgrade to version 2024121703: Add presentation_data column for Syntax 6 (Presentasi Proyek)
+    if ($oldversion < 2024121703) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field presentation_data to be added to project
+        $field = new xmldb_field('presentation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'product_data');
+        
+        // Conditionally add field presentation_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121703, 'ebelajar');
+    }
+
     return true;
 }

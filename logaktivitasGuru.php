@@ -517,26 +517,72 @@ echo '
 <div class="container mx-auto p-3" id="dataStep6">
     <div class="row">
         <div class="col-12">' .
-            ($project_data && $step6_status == "Selesai" ? 
-                '<h3>Tahap 6</h3>
+            ($step6_status == "Selesai" && !empty($step->presentation_data) ? 
+                '<h3>Tahap 6: Presentasi Proyek</h3>
                 <div class="card">
                     <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Data Evaluasi Kelompokmu</h4>
+                        <h4>Data Presentasi Kelompok</h4>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Evaluasi:</strong> ' . $project_data->evaluation . '</p>
-                    </div>
+                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                        (function() use ($step, $cmid, $DB) {
+                            $presentation_info = json_decode($step->presentation_data, true);
+                            $output = '';
+                            
+                            if (!empty($presentation_info['link_presentation'])) {
+                                $output .= '<p><strong>Link Presentasi:</strong></p>';
+                                $output .= '<p><a href="' . htmlspecialchars($presentation_info['link_presentation']) . '" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-external-link-alt"></i> Buka Presentasi</a></p>';
+                            }
+                            
+                            if (!empty($presentation_info['filename'])) {
+                                $fs = get_file_storage();
+                                $cm = get_coursemodule_from_id('ebelajar', $cmid, 0, false, MUST_EXIST);
+                                $context = context_module::instance($cm->id);
+                                $file = $fs->get_file(
+                                    $context->id,
+                                    'mod_ebelajar',
+                                    'presentation_file',
+                                    $step->id,
+                                    '/',
+                                    $presentation_info['filename']
+                                );
+                                if ($file && !$file->is_directory()) {
+                                    $file_url = moodle_url::make_pluginfile_url(
+                                        $context->id,
+                                        'mod_ebelajar',
+                                        'presentation_file',
+                                        $step->id,
+                                        '/',
+                                        $presentation_info['filename']
+                                    );
+                                    $output .= '<p><strong>File Presentasi:</strong></p>';
+                                    $output .= '<p><a href="' . $file_url . '" class="btn btn-success btn-sm" download><i class="fas fa-download"></i> Download: ' . htmlspecialchars($presentation_info['filename']) . '</a></p>';
+                                } else {
+                                    $output .= '<p><strong>File Presentasi:</strong> File tidak ditemukan.</p>';
+                                }
+                            } else {
+                                $output .= '<p><strong>File Presentasi:</strong> Tidak ada file yang diunggah.</p>';
+                            }
+                            
+                            if (!empty($presentation_info['notes'])) {
+                                $output .= '<p><strong>Catatan Tambahan:</strong></p>';
+                                $output .= '<div class="bg-white p-3 rounded mb-3">' . nl2br(htmlspecialchars($presentation_info['notes'])) . '</div>';
+                            }
+                            
+                            $output .= '<p class="text-muted small mt-3"><i class="fas fa-clock"></i> Diunggah: ' . htmlspecialchars($presentation_info['uploaded_at'] ?? '-') . '</p>';
+                            return $output;
+                        })() .
+                    '</div>
                 </div>' :
             ($step6_status == "Mengerjakan" ? 
-                '<h3>Tahap 6</h3>
+                '<h3>Tahap 6: Presentasi Proyek</h3>
                 <div class="alert alert-warning">
-                    Kelompok mu belum menambahkan evaluasi. Yuk jikalau sudah selesai silahkan dikumpulkan.
+                    Kelompok ini belum mengumpulkan presentasi.
                 </div>' :
-                '<h3>Tahap 6</h3>
+                '<h3>Tahap 6: Presentasi Proyek</h3>
                 <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 6.
+                    Kelompok ini belum menyelesaikan tahap 5.
                 </div>'
-            )) . 
+            )) .
         '</div>
     </div>
 </div>';
