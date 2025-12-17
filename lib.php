@@ -170,7 +170,7 @@ function ebelajar_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     require_login($course, true, $cm);
 
     // Allowed file areas for this plugin
-    $allowed_areas = ['product_evidence', 'presentation_file'];
+    $allowed_areas = ['product_evidence', 'presentation_file', 'revision_file'];
     
     // Only serve files from allowed file areas
     if (!in_array($filearea, $allowed_areas)) {

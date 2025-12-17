@@ -102,5 +102,31 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121703, 'ebelajar');
     }
 
+    // Upgrade to version 2024121704: Add evaluation_data and status_step7 for Syntax 7 (Penilaian & Evaluasi)
+    if ($oldversion < 2024121704) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field evaluation_data to be added to project
+        $field = new xmldb_field('evaluation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'presentation_data');
+        
+        // Conditionally add field evaluation_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field status_step7 to be added to project
+        $field = new xmldb_field('status_step7', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', 'status_step6');
+        
+        // Conditionally add field status_step7
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121704, 'ebelajar');
+    }
+
     return true;
 }

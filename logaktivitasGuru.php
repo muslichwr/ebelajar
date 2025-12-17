@@ -28,6 +28,7 @@ if ($group_project) {
     $step4_status = $DB->get_field('project', 'status_step4', ['group_project' => $group_project]);
     $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
     $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
+    $step7_status = $DB->get_field('project', 'status_step7', ['group_project' => $group_project]);
 } else {
     $project_data = null;
 }
@@ -591,5 +592,124 @@ echo '
 
 
 
-?>
+// Decode evaluation_data for Syntax 7
+$evaluation_info = [];
+if (!empty($step->evaluation_data)) {
+    $evaluation_info = json_decode($step->evaluation_data, true);
+}
 
+// Get revision file URL if exists
+$revision_file_url = null;
+$revision_filename = '';
+if (!empty($evaluation_info['revision_file'])) {
+    $fs = get_file_storage();
+    $cm = get_coursemodule_from_id('ebelajar', $cmid, 0, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+    $file = $fs->get_file(
+        $context->id,
+        'mod_ebelajar',
+        'revision_file',
+        $step->id,
+        '/',
+        $evaluation_info['revision_file']
+    );
+    if ($file && !$file->is_directory()) {
+        $revision_file_url = moodle_url::make_pluginfile_url(
+            $context->id,
+            'mod_ebelajar',
+            'revision_file',
+            $step->id,
+            '/',
+            $evaluation_info['revision_file']
+        );
+        $revision_filename = $evaluation_info['revision_file'];
+    }
+}
+
+echo '
+<div class="container mx-auto p-3" id="dataStep7">
+    <div class="row">
+        <div class="col-12">' .
+            ($step6_status == "Selesai" ? 
+                '<h3>Tahap 7: Penilaian & Evaluasi</h3>
+                <div class="card">
+                    <div class="card-header text-white" style="background-color: var(--custom-green);">
+                        <h4>Evaluasi Proyek Kelompok</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--custom-blue);">
+                        
+                        <!-- Teacher Feedback Section -->
+                        <div class="mb-4">
+                            <p><strong>Feedback Guru:</strong></p>' .
+                            (!empty($evaluation_info['teacher_feedback']) ?
+                                '<div class="bg-white p-3 rounded mb-3">' . nl2br(htmlspecialchars($evaluation_info['teacher_feedback'])) . '</div>' :
+                                '<div class="alert alert-secondary">Belum ada feedback. Gunakan tombol di bawah untuk memberikan evaluasi.</div>'
+                            ) .
+                        '</div>
+                        
+                        <!-- Action Button -->
+                        <div class="mb-4">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvaluasiGuru">
+                                <i class="fas fa-edit"></i> ' . (!empty($evaluation_info['teacher_feedback']) ? 'Edit Feedback' : 'Berikan Evaluasi') . '
+                            </button>
+                        </div>
+                        
+                        <!-- Student Revision Section (Read Only) -->
+                        <hr style="border-color: var(--custom-green);">
+                        <p><strong>Revisi Siswa:</strong></p>' .
+                        (!empty($evaluation_info['revision_notes']) ?
+                            '<div class="bg-white p-3 rounded mb-3">
+                                <p><strong>Catatan Perbaikan:</strong></p>
+                                <p>' . nl2br(htmlspecialchars($evaluation_info['revision_notes'])) . '</p>
+                            </div>' :
+                            '<div class="alert alert-secondary">Siswa belum mengirimkan revisi.</div>'
+                        ) .
+                        ($revision_file_url ?
+                            '<p><a href="' . $revision_file_url . '" class="btn btn-success btn-sm" download><i class="fas fa-download"></i> Download Revisi: ' . htmlspecialchars($revision_filename) . '</a></p>' :
+                            ''
+                        ) .
+                    '</div>
+                </div>' :
+                '<h3>Tahap 7: Penilaian & Evaluasi</h3>
+                <div class="alert alert-warning">
+                    Kelompok ini belum menyelesaikan tahap 6. Evaluasi dapat dilakukan setelah presentasi selesai.
+                </div>'
+            ) .
+        '</div>
+    </div>
+</div>';
+
+// Modal for Teacher Feedback
+echo '
+<div class="modal fade" id="modalEvaluasiGuru" tabindex="-1" role="dialog" aria-labelledby="modalEvaluasiGuruLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <h5 class="modal-title" id="modalEvaluasiGuruLabel">Evaluasi Proyek Kelompok</h5>
+          </div>
+          <div class="modal-body">
+            <form id="formEvaluasiGuru" method="POST" class="p-3 border rounded bg-light">
+                <input type="hidden" name="group_project" value="' . htmlspecialchars($group_project) . '">
+                <input type="hidden" name="cmid" value="' . htmlspecialchars($cmid) . '">
+
+                <div class="mb-3">
+                    <label for="teacher_feedback" class="form-label fw-bold">Feedback / Evaluasi untuk Kelompok <span class="text-danger">*</span></label>
+                    <textarea id="teacher_feedback" name="teacher_feedback" 
+                        class="form-control" 
+                        placeholder="Berikan evaluasi, saran, dan penilaian untuk proyek kelompok ini..." 
+                        rows="6" required>' . htmlspecialchars($evaluation_info['teacher_feedback'] ?? '') . '</textarea>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button id="btnSimpanEvaluasi" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                  <i class="fas fa-save"></i> Simpan Evaluasi
+              </button>
+              <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+          </div>
+</div>
+</div>
+</div>
+';
+
+?>

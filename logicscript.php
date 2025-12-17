@@ -233,6 +233,59 @@
         });
     }
 
+    // Handler for Teacher Evaluation (Syntax 7) - Using jQuery delegation
+    $(document).on('click', '#btnSimpanEvaluasi', function(e) {
+        e.preventDefault();
+        
+        var form = document.getElementById("formEvaluasiGuru");
+        var feedback = document.getElementById("teacher_feedback").value.trim();
+        
+        if (!feedback) {
+            Swal.fire({icon: "warning", title: "Feedback Kosong", text: "Harap isi evaluasi untuk kelompok."});
+            return;
+        }
+
+        var formData = new FormData(form);
+        var btnSave = $(this);
+        var originalText = btnSave.html();
+        
+        btnSave.prop("disabled", true);
+        btnSave.html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
+        
+        $.ajax({
+            url: "formtambahEvaluasiGuru.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                btnSave.prop("disabled", false);
+                btnSave.html(originalText);
+                
+                if (data.indexOf("Success") !== -1) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Evaluasi Berhasil Disimpan!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("modalEvaluasiGuru"));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({icon: "error", title: "Gagal", text: data});
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                btnSave.prop("disabled", false);
+                btnSave.html(originalText);
+                Swal.fire({icon: "error", title: "Error", text: "Terjadi kesalahan jaringan."});
+            }
+        });
+    });
+
 </script>
 
 

@@ -82,6 +82,7 @@ if ($result) {
     $step4_status = $DB->get_field('project', 'status_step4', ['group_project' => $group_project]);
     $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
     $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
+    $step7_status = $DB->get_field('project', 'status_step7', ['group_project' => $group_project]);
 } else {
     $project_data = null;
     $group_project = null;
@@ -91,6 +92,7 @@ if ($result) {
     $step4_status = null;
     $step5_status = null;
     $step6_status = null;
+    $step7_status = null;
 }
 
 /* DISABLED: Old Step 4 Activity Report Query (No longer used)
@@ -1537,6 +1539,95 @@ $results2 = $DB->get_records_sql($query2, $params2);
         </div>
     <?php endif; ?>
 
+        <!-- STEP 7: PENILAIAN & EVALUASI (SYNTAX 7) -->
+        <div class="container mx-auto p-3" id="dataStep7">
+            <div class="row">
+                <div class="col-12">
+                    <?php
+                    // Decode evaluation_data
+                    $evaluation_info = [];
+                    if (!empty($step->evaluation_data)) {
+                        $evaluation_info = json_decode($step->evaluation_data, true);
+                    }
+                    
+                    // Get revision file URL if exists
+                    $revision_file_url = null;
+                    $revision_filename = '';
+                    if (!empty($evaluation_info['revision_file'])) {
+                        $fs = get_file_storage();
+                        $file = $fs->get_file(
+                            $context->id,
+                            'mod_ebelajar',
+                            'revision_file',
+                            $step->id,
+                            '/',
+                            $evaluation_info['revision_file']
+                        );
+                        if ($file && !$file->is_directory()) {
+                            $revision_file_url = moodle_url::make_pluginfile_url(
+                                $context->id,
+                                'mod_ebelajar',
+                                'revision_file',
+                                $step->id,
+                                '/',
+                                $evaluation_info['revision_file']
+                            );
+                            $revision_filename = $evaluation_info['revision_file'];
+                        }
+                    }
+                    ?>
+                    
+                    <?php if ($step6_status == "Selesai" || $step7_status != "Belum Selesai"): ?>
+                        <h3>Tahap 7: Penilaian & Evaluasi</h3>
+                        
+                        <!-- Section A: Feedback Guru -->
+                        <div class="card mb-3">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4>Evaluasi Guru</h4>
+                            </div>
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <?php if (!empty($evaluation_info['teacher_feedback'])): ?>
+                                    <div class="alert alert-success">
+                                        <h5><i class="fas fa-comment-dots"></i> Feedback Guru:</h5>
+                                        <p><?php echo nl2br(htmlspecialchars($evaluation_info['teacher_feedback'])); ?></p>
+                                    </div>
+                                    
+                                    <!-- Section B: Revisi Siswa (Only if feedback exists) -->
+                                    <div class="mt-4">
+                                        <h5>Revisi Proyek</h5>
+                                        <p class="text-muted small">Jika ada perbaikan yang perlu dilakukan, silahkan upload file revisi di sini.</p>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <?php if ($revision_file_url): ?>
+                                                    <a href="<?php echo $revision_file_url; ?>" class="btn btn-outline-primary" download>
+                                                        <i class="fas fa-download"></i> Download Revisi: <?php echo htmlspecialchars($revision_filename); ?>
+                                                    </a>
+                                                    <div class="small text-muted mt-1">
+                                                        Catatan Revisi: <?php echo htmlspecialchars($evaluation_info['revision_notes'] ?? '-'); ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-muted"><i class="fas fa-times-circle"></i> Belum ada revisi yang diunggah.</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            
+                                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalTambahStep7">
+                                                <i class="fas fa-upload"></i> Upload Revisi
+                                            </button>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-clock"></i> Belum ada evaluasi dari Guru.
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
     <div class="modal fade" id="modalTambahProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -1914,6 +2005,116 @@ $results2 = $DB->get_records_sql($query2, $params2);
 
     })();
     </script>
+
+    <!-- MODAL TAMBAH STEP 7 - REVISI PROYEK -->
+    <div class="modal fade" id="modalTambahStep7" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep7Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="modalTambahStep7Label">Upload Revisi Proyek</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahStep7" method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+
+                    <!-- Catatan Revisi -->
+                    <div class="mb-3">
+                        <label for="revision_notes" class="form-label fw-bold">Catatan Perbaikan</label>
+                        <textarea id="revision_notes" name="revision_notes" 
+                            class="form-control" 
+                            placeholder="Jelaskan perbaikan yang telah dilakukan..." 
+                            rows="4" required><?php echo htmlspecialchars($evaluation_info['revision_notes'] ?? ''); ?></textarea>
+                    </div>
+
+                    <!-- File Revisi -->
+                    <div class="mb-3">
+                        <label for="revision_file" class="form-label fw-bold">File Revisi</label>
+                        <input type="file" id="revision_file" name="revision_file" 
+                            class="form-control"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar"
+                            <?php echo empty($evaluation_info['revision_file']) ? 'required' : ''; ?>>
+                        <small class="text-muted">Format: PDF, DOC, PPT, ZIP (Max: 10MB)</small>
+                        
+                        <?php if (!empty($evaluation_info['revision_file'])): ?>
+                        <div class="mt-2 alert alert-info py-2">
+                            <i class="fas fa-file"></i> File revisi saat ini: <strong><?php echo htmlspecialchars($evaluation_info['revision_file']); ?></strong>
+                            <br><small>Upload baru akan menggantikan yang lama.</small>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep7" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                      <i class="fas fa-save"></i> Kirim Revisi
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        window.saveRevisiStep7 = function(e) {
+            if (e) e.preventDefault();
+            
+            var form = document.getElementById('formTambahStep7');
+            var notes = document.getElementById('revision_notes').value.trim();
+            
+            if (!notes) {
+                Swal.fire({icon: 'warning', title: 'Catatan Kosong', text: 'Harap isi catatan perbaikan.'});
+                return;
+            }
+
+            var formData = new FormData(form);
+            var btnSave = document.getElementById('btnSimpanStep7');
+            var originalText = btnSave.innerHTML;
+            
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            fetch('formtambahDataStep7.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.text(); })
+            .then(function(data) {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                
+                if (data.indexOf('Success') !== -1) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Revisi Berhasil Dikirim!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function() {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep7'));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({icon: 'error', title: 'Gagal', text: data});
+                }
+            })
+            .catch(function(error) {
+                console.error(error);
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                Swal.fire({icon: 'error', title: 'Error', text: 'Terjadi kesalahan jaringan.'});
+            });
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('btnSimpanStep7');
+            if (btn) btn.addEventListener('click', window.saveRevisiStep7);
+        });
+    })();
+    </script>
+
 
 
     <!-- MODAL TAMBAH STEP 2 - JADWAL PROYEK (INLINE JS) -->
