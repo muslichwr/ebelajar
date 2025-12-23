@@ -250,6 +250,8 @@ $step3_schedule_file = $DB->get_field('ebelajar', 'step3_schedule_file', ['cours
         $step4_status = $DB->get_field('project', 'status_step4', ['group_project' => $group_project]);
         $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
         $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
+        $step7_status = $DB->get_field('project', 'status_step7', ['group_project' => $group_project]);
+        $step8_status = $DB->get_field('project', 'status_step8', ['group_project' => $group_project]);
 
         // Hitung jumlah langkah yang selesai
         $completed_steps = 0;
@@ -259,9 +261,11 @@ $step3_schedule_file = $DB->get_field('ebelajar', 'step3_schedule_file', ['cours
         if ($step4_status == "Selesai") $completed_steps++;
         if ($step5_status == "Selesai") $completed_steps++;
         if ($step6_status == "Selesai") $completed_steps++;
+        if ($step7_status == "Selesai") $completed_steps++;
+        if ($step8_status == "Selesai") $completed_steps++;
 
         // Hitung total langkah
-        $total_steps = 6;
+        $total_steps = 8;
 
         $percentage = ($completed_steps / $total_steps) * 100;
 

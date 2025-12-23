@@ -128,5 +128,31 @@ function xmldb_ebelajar_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024121704, 'ebelajar');
     }
 
+    // Upgrade to version 2024121705: Add reflection_data and status_step8 for Syntax 8 (Refleksi Pembelajaran)
+    if ($oldversion < 2024121705) {
+        
+        // Define table project to be modified
+        $table = new xmldb_table('project');
+        
+        // Define field reflection_data to be added to project
+        $field = new xmldb_field('reflection_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'evaluation_data');
+        
+        // Conditionally add field reflection_data
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field status_step8 to be added to project
+        $field = new xmldb_field('status_step8', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', 'status_step7');
+        
+        // Conditionally add field status_step8
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Ebelajar savepoint reached
+        upgrade_mod_savepoint(true, 2024121705, 'ebelajar');
+    }
+
     return true;
 }

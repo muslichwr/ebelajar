@@ -286,6 +286,81 @@
         });
     });
 
+    // Handler for Student Reflection (Syntax 8) - Using jQuery delegation
+    $(document).on('click', '#btnSimpanStep8', function(e) {
+        e.preventDefault();
+        
+        var q1 = document.getElementById("reflection_q1").value.trim();
+        var q2 = document.getElementById("reflection_q2").value.trim();
+        var q3 = document.getElementById("reflection_q3").value.trim();
+        
+        // Validation
+        if (!q1) {
+            Swal.fire({icon: "warning", title: "Jawaban Kosong", text: "Harap isi pertanyaan 1."});
+            return;
+        }
+        if (!q2) {
+            Swal.fire({icon: "warning", title: "Jawaban Kosong", text: "Harap isi pertanyaan 2."});
+            return;
+        }
+        if (!q3) {
+            Swal.fire({icon: "warning", title: "Jawaban Kosong", text: "Harap isi pertanyaan 3."});
+            return;
+        }
+
+        // Serialize to JSON
+        var reflectionData = JSON.stringify({
+            q1: q1,
+            q2: q2,
+            q3: q3
+        });
+        
+        // Put into hidden field
+        document.getElementById("hidden_reflection_data").value = reflectionData;
+
+        var form = document.getElementById("formTambahStep8");
+        var formData = new FormData(form);
+        var btnSave = $(this);
+        var originalText = btnSave.html();
+        
+        btnSave.prop("disabled", true);
+        btnSave.html('<i class="fas fa-spinner fa-spin"></i> Mengirim...');
+        
+        $.ajax({
+            url: "formtambahDataStep8.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                btnSave.prop("disabled", false);
+                btnSave.html(originalText);
+                
+                if (data.indexOf("Success") !== -1) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Refleksi Berhasil Dikirim!",
+                        text: "Selamat! Kamu telah menyelesaikan semua tahapan PjBL.",
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function() {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById("modalTambahStep8"));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({icon: "error", title: "Gagal", text: data});
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                btnSave.prop("disabled", false);
+                btnSave.html(originalText);
+                Swal.fire({icon: "error", title: "Error", text: "Terjadi kesalahan jaringan."});
+            }
+        });
+    });
+
 </script>
 
 

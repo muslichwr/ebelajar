@@ -29,6 +29,7 @@ if ($group_project) {
     $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
     $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
     $step7_status = $DB->get_field('project', 'status_step7', ['group_project' => $group_project]);
+    $step8_status = $DB->get_field('project', 'status_step8', ['group_project' => $group_project]);
 } else {
     $project_data = null;
 }
@@ -711,5 +712,61 @@ echo '
 </div>
 </div>
 ';
+
+// ==================== STEP 8: REFLEKSI PEMBELAJARAN (TEACHER VIEW) ====================
+// Decode reflection_data for Syntax 8
+$reflection_info = [];
+if (!empty($step->reflection_data)) {
+    $reflection_info = json_decode($step->reflection_data, true);
+}
+
+echo '
+<div class="container mx-auto p-3" id="dataStep8">
+    <div class="row">
+        <div class="col-12">' .
+            ($step7_status == "Selesai" || $step7_status == "Mengerjakan" ?
+                '<h3>Tahap 8: Refleksi Pembelajaran</h3>
+                <div class="card">
+                    <div class="card-header text-white" style="background-color: var(--custom-green);">
+                        <h4><i class="fas fa-lightbulb"></i> Refleksi Kelompok</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                    (!empty($reflection_info) ?
+                        '<div class="card mb-3">
+                            <div class="card-body bg-white">
+                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 1</h6>
+                                <p class="fw-bold">Apa pengalaman baru yang kalian dapatkan?</p>
+                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q1'] ?? '-')) . '</p>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body bg-white">
+                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 2</h6>
+                                <p class="fw-bold">Apa kendala yang dihadapi dan solusinya?</p>
+                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q2'] ?? '-')) . '</p>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body bg-white">
+                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 3</h6>
+                                <p class="fw-bold">Bagaimana kesan pembelajaran berbasis proyek ini?</p>
+                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q3'] ?? '-')) . '</p>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-3">
+                            <i class="fas fa-clock"></i> Dikirim: ' . htmlspecialchars($reflection_info['submitted_at'] ?? '-') . '
+                        </p>' :
+                        '<div class="alert alert-secondary">Kelompok ini belum mengirimkan refleksi pembelajaran.</div>'
+                    ) .
+                    '</div>
+                </div>' :
+                '<h3>Tahap 8: Refleksi Pembelajaran</h3>
+                <div class="alert alert-warning">
+                    Kelompok ini belum menyelesaikan tahap 7 (Penilaian & Evaluasi).
+                </div>'
+            ) .
+        '</div>
+    </div>
+</div>';
 
 ?>

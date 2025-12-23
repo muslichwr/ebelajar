@@ -83,6 +83,7 @@ if ($result) {
     $step5_status = $DB->get_field('project', 'status_step5', ['group_project' => $group_project]);
     $step6_status = $DB->get_field('project', 'status_step6', ['group_project' => $group_project]);
     $step7_status = $DB->get_field('project', 'status_step7', ['group_project' => $group_project]);
+    $step8_status = $DB->get_field('project', 'status_step8', ['group_project' => $group_project]);
 } else {
     $project_data = null;
     $group_project = null;
@@ -93,6 +94,7 @@ if ($result) {
     $step5_status = null;
     $step6_status = null;
     $step7_status = null;
+    $step8_status = null;
 }
 
 /* DISABLED: Old Step 4 Activity Report Query (No longer used)
@@ -1628,6 +1630,85 @@ $results2 = $DB->get_records_sql($query2, $params2);
             </div>
         </div>
 
+    <!-- STEP 8: REFLEKSI PEMBELAJARAN (SYNTAX 8) -->
+    <div class="container mx-auto p-3" id="dataStep8">
+        <div class="row">
+            <div class="col-12">
+                <?php
+                // Decode reflection_data
+                $reflection_info = [];
+                if (!empty($step->reflection_data)) {
+                    $reflection_info = json_decode($step->reflection_data, true);
+                }
+                ?>
+                
+                <?php if ($step7_status == "Selesai" || $step7_status == "Mengerjakan"): ?>
+                    <h3>Tahap 8: Refleksi Pembelajaran</h3>
+                    
+                    <?php if ($step8_status == "Selesai" && !empty($reflection_info)): ?>
+                        <!-- Display Reflection Answers -->
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4><i class="fas fa-lightbulb"></i> Refleksi Kelompok</h4>
+                            </div>
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <div class="card mb-3">
+                                    <div class="card-body bg-white">
+                                        <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 1</h6>
+                                        <p class="fw-bold">Apa pengalaman baru yang kalian dapatkan?</p>
+                                        <p class="ms-3"><?php echo nl2br(htmlspecialchars($reflection_info['q1'] ?? '-')); ?></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-body bg-white">
+                                        <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 2</h6>
+                                        <p class="fw-bold">Apa kendala yang dihadapi dan solusinya?</p>
+                                        <p class="ms-3"><?php echo nl2br(htmlspecialchars($reflection_info['q2'] ?? '-')); ?></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-body bg-white">
+                                        <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 3</h6>
+                                        <p class="fw-bold">Bagaimana kesan pembelajaran berbasis proyek ini?</p>
+                                        <p class="ms-3"><?php echo nl2br(htmlspecialchars($reflection_info['q3'] ?? '-')); ?></p>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-muted small mt-3">
+                                    <i class="fas fa-clock"></i> Dikirim: <?php echo htmlspecialchars($reflection_info['submitted_at'] ?? '-'); ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- Show Form Button -->
+                        <div class="d-flex justify-content-end mb-2">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep8">
+                                <i class="fas fa-pen"></i> Isi Refleksi
+                            </button>
+                        </div>
+                        <div class="card">
+                            <div class="card-header text-white" style="background-color: var(--custom-green);">
+                                <h4><i class="fas fa-lightbulb"></i> Refleksi Pembelajaran</h4>
+                            </div>
+                            <div class="card-body" style="background-color: var(--custom-blue);">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle"></i> Silahkan isi refleksi pembelajaran kelompok untuk menyelesaikan proyek PjBL.
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <h3>Tahap 8: Refleksi Pembelajaran</h3>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Selesaikan tahap 7 (Penilaian & Evaluasi) terlebih dahulu.
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalTambahProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -2115,6 +2196,147 @@ $results2 = $DB->get_records_sql($query2, $params2);
     })();
     </script>
 
+    <!-- MODAL TAMBAH STEP 8 - REFLEKSI PEMBELAJARAN -->
+    <div class="modal fade" id="modalTambahStep8" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep8Label" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                  <h5 class="modal-title" id="modalTambahStep8Label"><i class="fas fa-lightbulb"></i> Refleksi Pembelajaran</h5>
+              </div>
+              <div class="modal-body">
+                <form id="formTambahStep8" method="POST" class="p-3 border rounded bg-light">
+                    <input type="hidden" name="group_project" value="<?php echo $result->groupproject; ?>">
+                    <input type="hidden" name="cmid" value="<?php echo $cmid; ?>">
+                    
+                    <!-- Hidden field for JSON -->
+                    <textarea name="reflection_data" id="hidden_reflection_data" style="display:none;"></textarea>
+
+                    <p class="text-muted mb-4">Silahkan jawab pertanyaan refleksi berikut untuk menyelesaikan proyek PjBL.</p>
+
+                    <!-- Question 1 -->
+                    <div class="mb-4">
+                        <label for="reflection_q1" class="form-label fw-bold">
+                            <span class="badge bg-primary me-2">1</span>
+                            Apa pengalaman baru yang kalian dapatkan?
+                        </label>
+                        <textarea id="reflection_q1" class="form-control" 
+                            placeholder="Ceritakan pengalaman baru, pengetahuan, atau keterampilan yang kalian peroleh selama mengerjakan proyek ini..." 
+                            rows="4" required></textarea>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="mb-4">
+                        <label for="reflection_q2" class="form-label fw-bold">
+                            <span class="badge bg-primary me-2">2</span>
+                            Apa kendala yang dihadapi dan solusinya?
+                        </label>
+                        <textarea id="reflection_q2" class="form-control" 
+                            placeholder="Jelaskan kendala atau hambatan yang dihadapi selama proyek berlangsung dan bagaimana kalian mengatasinya..." 
+                            rows="4" required></textarea>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="mb-4">
+                        <label for="reflection_q3" class="form-label fw-bold">
+                            <span class="badge bg-primary me-2">3</span>
+                            Bagaimana kesan pembelajaran berbasis proyek ini?
+                        </label>
+                        <textarea id="reflection_q3" class="form-control" 
+                            placeholder="Bagikan kesan kalian tentang pembelajaran berbasis proyek ini. Apa yang kalian rasakan? Apakah pembelajaran ini bermanfaat?..." 
+                            rows="4" required></textarea>
+                    </div>
+
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnSimpanStep8" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                      <i class="fas fa-paper-plane"></i> Kirim Refleksi
+                  </button>
+                  <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        window.saveRefleksiStep8 = function(e) {
+            if (e) e.preventDefault();
+            
+            var q1 = document.getElementById('reflection_q1').value.trim();
+            var q2 = document.getElementById('reflection_q2').value.trim();
+            var q3 = document.getElementById('reflection_q3').value.trim();
+            
+            // Validation
+            if (!q1) {
+                Swal.fire({icon: 'warning', title: 'Jawaban Kosong', text: 'Harap isi pertanyaan 1.'});
+                return;
+            }
+            if (!q2) {
+                Swal.fire({icon: 'warning', title: 'Jawaban Kosong', text: 'Harap isi pertanyaan 2.'});
+                return;
+            }
+            if (!q3) {
+                Swal.fire({icon: 'warning', title: 'Jawaban Kosong', text: 'Harap isi pertanyaan 3.'});
+                return;
+            }
+
+            // Serialize to JSON and put in hidden field
+            var reflectionData = JSON.stringify({
+                q1: q1,
+                q2: q2,
+                q3: q3
+            });
+            document.getElementById('hidden_reflection_data').value = reflectionData;
+
+            var form = document.getElementById('formTambahStep8');
+            var formData = new FormData(form);
+            var btnSave = document.getElementById('btnSimpanStep8');
+            var originalText = btnSave.innerHTML;
+            
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            
+            fetch('formtambahDataStep8.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.text(); })
+            .then(function(data) {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                
+                if (data.indexOf('Success') !== -1) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Refleksi Berhasil Dikirim!',
+                        text: 'Selamat! Kamu telah menyelesaikan semua tahapan PjBL.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function() {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('modalTambahStep8'));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({icon: 'error', title: 'Gagal', text: data});
+                }
+            })
+            .catch(function(error) {
+                console.error(error);
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                Swal.fire({icon: 'error', title: 'Error', text: 'Terjadi kesalahan jaringan.'});
+            });
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('btnSimpanStep8');
+            if (btn) btn.addEventListener('click', window.saveRefleksiStep8);
+        });
+    })();
+    </script>
 
 
     <!-- MODAL TAMBAH STEP 2 - JADWAL PROYEK (INLINE JS) -->
