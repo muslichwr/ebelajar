@@ -40,42 +40,168 @@ echo '
         --custom-blue: #bed4d1;
         --custom-green: #5a9f68;
         --custom-red: #ff5757;
+        /* Step Colors */
+        --step1-color: #10b981;
+        --step2-color: #3b82f6;
+        --step3-color: #06b6d4;
+        --step5-color: #8b5cf6;
+        --step6-color: #f97316;
+        --step7-color: #eab308;
+        --step8-color: #ec4899;
     }
     .logo {
         display: inline-block;
+    }
+    /* Premium Card Styles */
+    .step-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    .step-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+    .step-card.step-1 { border-top: 4px solid var(--step1-color); }
+    .step-card.step-2 { border-top: 4px solid var(--step2-color); }
+    .step-card.step-3 { border-top: 4px solid var(--step3-color); }
+    .step-card.step-5 { border-top: 4px solid var(--step5-color); }
+    .step-card.step-6 { border-top: 4px solid var(--step6-color); }
+    .step-card.step-7 { border-top: 4px solid var(--step7-color); }
+    .step-card.step-8 { border-top: 4px solid var(--step8-color); }
+    
+    /* Step Header */
+    .step-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+    }
+    .step-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    .step-title i { font-size: 1.25rem; }
+    .step-title span:last-child { font-size: 1.1rem; font-weight: 600; color: #333; }
+    
+    /* Status Badges */
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .status-badge.filled { background-color: #3b82f6; color: #ffffff; }
+    .status-badge.empty { background-color: #f3f4f6; color: #6b7280; }
+    .status-badge.warning { background-color: #fef3c7; color: #92400e; }
+    
+    /* Premium Table */
+    .premium-table {
+        border-radius: 8px;
+        overflow: hidden;
+        border: none;
+    }
+    .premium-table thead th {
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        color: white;
+        font-weight: 600;
+        border: none;
+        padding: 0.85rem;
+    }
+    .premium-table tbody tr:hover { background-color: rgba(59, 130, 246, 0.08); }
+    .premium-table tbody td { border-color: #e5e7eb; padding: 0.75rem; vertical-align: middle; }
+    
+    /* Teacher Action Card - Highlighted for grading */
+    .teacher-action-card {
+        border: 2px solid #fbbf24;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    }
+    .teacher-action-card .card-header {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    
+    /* Premium Alert */
+    .premium-alert {
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    .premium-alert.alert-warning { border-left-color: #f59e0b; }
+    .premium-alert.alert-info { border-left-color: #3b82f6; }
+    .premium-alert.alert-secondary { border-left-color: #6b7280; }
+    
+    /* Info Panel for student data */
+    .info-panel {
+        background-color: #f8fafc;
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
     }
 </style>
 ';
 
 echo '
-    <nav class="container navbar navbar-expand-md navbar-light px-2 rounded-2" style="background-color: var(--custom-green); border: 4px solid var(--custom-blue);">
+    <nav class="container navbar navbar-expand-md navbar-light px-2 shadow-sm" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); border-radius: 0 0 12px 12px;">
         <div class="container-fluid px-md-5">
-            <div class="logo mx-auto">
-                <!-- <img class="navbar-brand" src="path-to-your-logo.png" alt="Logo" width="100"> -->
-                <h3 class="navbar-brand text-white fw-bolder">Activityku</h3>
+            <div class="logo d-flex align-items-center gap-2 mx-auto">
+                <i class="fas fa-chalkboard-teacher fs-3 text-white"></i>
+                <h3 class="navbar-brand text-white fw-bolder mb-0">Teacher Monitoring</h3>
             </div>
         </div>
     </nav>
 ';
 
+
 echo '
-    <div class="container mx-auto p-3">
-        <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-green);">
-            <div class="col-lg-6 col-12 text-center mb-4 mb-lg-0">
-                <img src="assets/guru-awal(3).svg" class="img-fluid" alt="Ilustrasi">
+    <!-- Group Header Banner -->
+    <div class="container mx-auto p-3 mt-3">
+        <div class="row align-items-center p-4 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 16px;">
+            <div class="col-lg-5 col-12 text-center mb-4 mb-lg-0">
+                <img src="assets/guru-awal(3).png" class="img-fluid" alt="Ilustrasi" style="max-height: 180px;">
             </div>
-            <div class="col-lg-6 col-12 text-center">
-                <h1 class="fw-bolder text-white"><strong>KELOMPOK ' . htmlspecialchars($groups_number) . '</strong></h1>
+            <div class="col-lg-7 col-12 text-center text-lg-start">
+                <span class="badge bg-light text-primary mb-2"><i class="fas fa-users me-1"></i> Monitoring Kelompok</span>
+                <h1 class="fw-bolder text-white mb-0">KELOMPOK ' . htmlspecialchars($groups_number) . '</h1>
             </div>
         </div>
     </div>
 ';
 
+
 echo' 
     <div class="container mx-auto p-3">
         <div class="d-flex justify-content-start">
-            <button class="btn d-flex align-items-center fw-bold" onclick="kembalimenu1('.$cmid.')" style="background-color: var(--custom-blue); color: var(--custom-red);">
-                <i class="fas fa-arrow-left me-2"></i>Kembali
+            <button class="btn d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm" onclick="kembalimenu1('.$cmid.')" style="background-color: white; color: #333; border: 1px solid #e5e7eb;">
+                <i class="fas fa-arrow-left"></i>Kembali ke Menu
             </button>
         </div>
     </div>
@@ -83,17 +209,18 @@ echo'
 
 if ($student_records) {
     echo '
+    <!-- Student List Card -->
     <div class="container mx-auto p-3">
-        <div class="card">
-            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                <h4>Kelompok ' . htmlspecialchars($group_number) . '</h4>
+        <div class="card step-card" style="border-top: 4px solid #3b82f6;">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i>Anggota Kelompok</h5>
             </div>
-            <div class="card-body" style="background-color: var(--custom-blue);">
-                <table class="table table-bordered table-striped">
+            <div class="card-body" style="background-color: #f8fafc;">
+                <table class="table table-hover premium-table bg-white mb-0">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama</th>
+                            <th style="width: 60px;">No</th>
+                            <th>Nama Siswa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,8 +241,8 @@ if ($student_records) {
 
         echo '
             <tr>
-                <td>' . $no++ . '.</td>
-                <td>' . $nama_user . '</td>
+                <td class="text-center fw-bold">' . $no++ . '</td>
+                <td><i class="fas fa-user-circle text-primary me-2"></i>' . $nama_user . '</td>
             </tr>
         ';
     }
@@ -130,8 +257,11 @@ if ($student_records) {
 } else {
     echo '
     <div class="container mx-auto p-3">
-        <div class="alert alert-warning">
-            Tidak ada data siswa dalam kelompok ini.
+        <div class="alert alert-warning premium-alert">
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <p class="mb-0">Tidak ada data siswa dalam kelompok ini.</p>
+            </div>
         </div>
     </div>
     ';
@@ -144,8 +274,8 @@ if ($step1_status == "Selesai" && !empty($step->analysis_data)) {
     if (is_array($indicators) && count($indicators) > 0) {
         $indicators_html = '
         <div class="table-responsive">
-            <table class="table table-bordered table-striped bg-white">
-                <thead class="table-success">
+            <table class="table table-hover premium-table bg-white">
+                <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
                         <th style="width: 35%;">Indikator Penyebab</th>
@@ -168,10 +298,10 @@ if ($step1_status == "Selesai" && !empty($step->analysis_data)) {
             </table>
         </div>';
     } else {
-        $indicators_html = '<div class="alert alert-info">Belum ada indikator yang ditambahkan.</div>';
+        $indicators_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada indikator yang ditambahkan.</div>';
     }
 } else {
-    $indicators_html = '<div class="alert alert-info">Belum ada indikator yang ditambahkan.</div>';
+    $indicators_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada indikator yang ditambahkan.</div>';
 }
 
 echo '
@@ -179,38 +309,58 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step1_status == "Selesai" ? 
-                '<h3>Tahap 1</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Rumusan Masalah & Analisis</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        <i class="fas fa-brain" style="color: var(--step1-color);"></i>
+                        <span>Rumusan Masalah & Analisis</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Studi Kasus:</strong> ' . htmlspecialchars($ebelajar_records->case_study) . '</p>
-                        <hr style="border-color: var(--custom-green);">
+                    <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>
+                </div>
+                <div class="card step-card step-1">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Rumusan Masalah & Analisis</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
+                        <div class="info-panel mb-3">
+                            <p class="mb-1"><strong><i class="fas fa-book-open me-2 text-primary"></i>Studi Kasus:</strong></p>
+                            <p class="mb-0">' . htmlspecialchars($ebelajar_records->case_study) . '</p>
+                        </div>
                         
-                        <p><strong>Rumusan Masalah:</strong></p>
-                        <div class="bg-white p-3 rounded mb-3">' . 
-                            (!empty($step->step1_formulation) ? 
-                                nl2br(htmlspecialchars($step->step1_formulation)) : 
-                                '<span class="badge bg-warning text-dark">Belum ada rumusan masalah</span>'
-                            ) . 
-                        '</div>
+                        <div class="info-panel mb-3">
+                            <p class="mb-1"><strong><i class="fas fa-question-circle me-2 text-primary"></i>Rumusan Masalah:</strong></p>
+                            <div class="bg-white p-3 rounded">' . 
+                                (!empty($step->step1_formulation) ? 
+                                    nl2br(htmlspecialchars($step->step1_formulation)) : 
+                                    '<span class="badge bg-warning text-dark">Belum ada rumusan masalah</span>'
+                                ) . 
+                            '</div>
+                        </div>
                         
-                        <p><strong>Orientasi Masalah:</strong></p>
-                        <div class="bg-white p-3 rounded mb-3">' . 
-                            (!empty($step->problem_definition) ? 
-                                nl2br(htmlspecialchars($step->problem_definition)) : 
-                                '<span class="badge bg-warning text-dark">Belum ada orientasi masalah</span>'
-                            ) . 
-                        '</div>
+                        <div class="info-panel mb-3">
+                            <p class="mb-1"><strong><i class="fas fa-compass me-2 text-info"></i>Orientasi Masalah:</strong></p>
+                            <div class="bg-white p-3 rounded">' . 
+                                (!empty($step->problem_definition) ? 
+                                    nl2br(htmlspecialchars($step->problem_definition)) : 
+                                    '<span class="badge bg-warning text-dark">Belum ada orientasi masalah</span>'
+                                ) . 
+                            '</div>
+                        </div>
                         
-                        <p><strong>Indikator Penyebab Masalah:</strong></p>
+                        <p><strong><i class="fas fa-list-check me-2 text-primary"></i>Indikator Penyebab Masalah:</strong></p>
                         ' . $indicators_html . '
                     </div>
                 </div>' : 
-                '<h3>Tahap 1</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 1.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        <i class="fas fa-brain" style="color: var(--step1-color);"></i>
+                        <span>Rumusan Masalah & Analisis</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 1.
                 </div>'
             ) . 
         '</div>
@@ -226,8 +376,8 @@ if (!empty($step->planning_data)) {
     if (is_array($schedule_data) && count($schedule_data) > 0) {
         $schedule_html = '
         <div class="table-responsive">
-            <table class="table table-bordered table-striped bg-white">
-                <thead class="table-success">
+            <table class="table table-hover premium-table bg-white">
+                <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
                         <th style="width: 30%;">Kegiatan</th>
@@ -254,10 +404,10 @@ if (!empty($step->planning_data)) {
             </table>
         </div>';
     } else {
-        $schedule_html = '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+        $schedule_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada jadwal yang disusun.</div>';
     }
 } else {
-    $schedule_html = '<div class="alert alert-info">Belum ada jadwal yang disusun.</div>';
+    $schedule_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada jadwal yang disusun.</div>';
 }
 
 echo '
@@ -265,30 +415,51 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step2_status == "Selesai" ? 
-                '<h3>Tahap 2 dan Tahap 3</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Perencanaan & Jadwal Proyek</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                        <span>Perencanaan & Jadwal Proyek</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
+                    <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>
+                </div>
+                <div class="card step-card step-2">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Perencanaan & Jadwal Proyek</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
+                        <p><strong><i class="fas fa-list me-2 text-primary"></i>Jadwal pelaksanaan proyek kelompok:</strong></p>
                         ' . $schedule_html . '
                     </div>
                 </div>' : 
             ($step2_status == "Mengerjakan" ? 
-                '<h3>Tahap 2 dan Tahap 3</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Perencanaan & Jadwal Proyek</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                        <span>Perencanaan & Jadwal Proyek</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Jadwal pelaksanaan proyek kelompok:</strong></p>
+                    <span class="status-badge warning"><i class="fas fa-spinner"></i> Sedang Dikerjakan</span>
+                </div>
+                <div class="card step-card step-2">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Perencanaan & Jadwal Proyek</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
+                        <p><strong><i class="fas fa-list me-2 text-primary"></i>Jadwal pelaksanaan proyek kelompok:</strong></p>
                         ' . $schedule_html . '
                     </div>
                 </div>' :
-                '<h3>Tahap 2 dan Tahap 3</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 2.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                        <span>Perencanaan & Jadwal Proyek</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 2.
                 </div>'
             )) . 
         '</div>
@@ -302,8 +473,8 @@ if (!empty($step->logbook_data)) {
     if (is_array($logbook_entries) && count($logbook_entries) > 0) {
         $logbook_html = '
         <div class="table-responsive">
-            <table class="table table-bordered table-striped bg-white">
-                <thead class="table-success">
+            <table class="table table-hover premium-table bg-white">
+                <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
                         <th style="width: 12%;">Tanggal</th>
@@ -341,10 +512,10 @@ if (!empty($step->logbook_data)) {
             </table>
         </div>';
     } else {
-        $logbook_html = '<div class="alert alert-info">Belum ada catatan logbook.</div>';
+        $logbook_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada catatan logbook.</div>';
     }
 } else {
-    $logbook_html = '<div class="alert alert-info">Belum ada catatan logbook.</div>';
+    $logbook_html = '<div class="alert alert-info premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada catatan logbook.</div>';
 }
 
 echo '
@@ -352,30 +523,51 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step3_status == "Selesai" ? 
-                '<h3>Tahap 4</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Logbook Pelaksanaan Proyek</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                        <span>Logbook Pelaksanaan</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Catatan harian pelaksanaan proyek kelompok:</strong></p>
+                    <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>
+                </div>
+                <div class="card step-card step-3">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Logbook Pelaksanaan Proyek</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
+                        <p><strong><i class="fas fa-history me-2 text-info"></i>Catatan harian pelaksanaan proyek kelompok:</strong></p>
                         ' . $logbook_html . '
                     </div>
                 </div>' : 
             ($step3_status == "Mengerjakan" ? 
-                '<h3>Tahap 4</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Logbook Pelaksanaan Proyek</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                        <span>Logbook Pelaksanaan</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
-                        <p><strong>Catatan harian pelaksanaan proyek kelompok:</strong></p>
+                    <span class="status-badge warning"><i class="fas fa-spinner"></i> Sedang Dikerjakan</span>
+                </div>
+                <div class="card step-card step-3">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Logbook Pelaksanaan Proyek</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
+                        <p><strong><i class="fas fa-history me-2 text-info"></i>Catatan harian pelaksanaan proyek kelompok:</strong></p>
                         ' . $logbook_html . '
                     </div>
                 </div>' :
-                '<h3>Tahap 4</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 3.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                        <span>Logbook Pelaksanaan</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 3.
                 </div>'
             )) . 
         '</div>
@@ -450,12 +642,19 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step5_status == "Selesai" && !empty($step->product_data) ? 
-                '<h3>Tahap 5: Pengumpulan Proyek</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Data Proyek Kelompok</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                        <span>Pengumpulan Proyek</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                    <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Dikumpulkan</span>
+                </div>
+                <div class="card step-card step-5">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Data Proyek Kelompok</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">' .
                         (function() use ($step, $cmid, $DB) {
                             $product_info = json_decode($step->product_data, true);
                             $output = '<p><strong>Deskripsi Proyek:</strong></p>';
@@ -502,30 +701,52 @@ echo '
                     '</div>
                 </div>' :
             ($step5_status == "Mengerjakan" ? 
-                '<h3>Tahap 5: Pengumpulan Proyek</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum mengumpulkan proyek.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                        <span>Pengumpulan Proyek</span>
+                    </div>
+                    <span class="status-badge warning"><i class="fas fa-spinner"></i> Belum Mengumpulkan</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum mengumpulkan proyek.
                 </div>' :
-                '<h3>Tahap 5: Pengumpulan Proyek</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 4.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                        <span>Pengumpulan Proyek</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 4.
                 </div>'
             )) .
         '</div>
     </div>
 </div>';
 
+
 echo '
 <div class="container mx-auto p-3" id="dataStep6">
     <div class="row">
         <div class="col-12">' .
             ($step6_status == "Selesai" && !empty($step->presentation_data) ? 
-                '<h3>Tahap 6: Presentasi Proyek</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Data Presentasi Kelompok</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">6</span>
+                        <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                        <span>Presentasi Proyek</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                    <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Dikumpulkan</span>
+                </div>
+                <div class="card step-card step-6">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-presentation me-2"></i>Data Presentasi Kelompok</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">' .
                         (function() use ($step, $cmid, $DB) {
                             $presentation_info = json_decode($step->presentation_data, true);
                             $output = '';
@@ -576,13 +797,27 @@ echo '
                     '</div>
                 </div>' :
             ($step6_status == "Mengerjakan" ? 
-                '<h3>Tahap 6: Presentasi Proyek</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum mengumpulkan presentasi.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">6</span>
+                        <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                        <span>Presentasi Proyek</span>
+                    </div>
+                    <span class="status-badge warning"><i class="fas fa-spinner"></i> Belum Mengumpulkan</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum mengumpulkan presentasi.
                 </div>' :
-                '<h3>Tahap 6: Presentasi Proyek</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 5.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">6</span>
+                        <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                        <span>Presentasi Proyek</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 5.
                 </div>'
             )) .
         '</div>
@@ -627,53 +862,70 @@ if (!empty($evaluation_info['revision_file'])) {
     }
 }
 
+
 echo '
 <div class="container mx-auto p-3" id="dataStep7">
     <div class="row">
         <div class="col-12">' .
             ($step6_status == "Selesai" ? 
-                '<h3>Tahap 7: Penilaian & Evaluasi</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4>Evaluasi Proyek Kelompok</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">7</span>
+                        <i class="fas fa-clipboard-check" style="color: var(--step7-color);"></i>
+                        <span>Penilaian & Evaluasi</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">
+                    <span class="status-badge ' . (!empty($evaluation_info['teacher_feedback']) ? 'filled"><i class="fas fa-check-circle"></i> Feedback Diberikan' : 'warning"><i class="fas fa-pen"></i> Perlu Evaluasi') . '</span>
+                </div>
+                
+                <!-- Step 7 Card -->
+                <div class="card step-card step-7">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Evaluasi Proyek Kelompok</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">
                         
                         <!-- Teacher Feedback Section -->
                         <div class="mb-4">
-                            <p><strong>Feedback Guru:</strong></p>' .
+                            <p class="mb-2"><strong><i class="fas fa-comment-dots me-2 text-primary"></i>Feedback Guru:</strong></p>' .
                             (!empty($evaluation_info['teacher_feedback']) ?
-                                '<div class="bg-white p-3 rounded mb-3">' . nl2br(htmlspecialchars($evaluation_info['teacher_feedback'])) . '</div>' :
-                                '<div class="alert alert-secondary">Belum ada feedback. Gunakan tombol di bawah untuk memberikan evaluasi.</div>'
+                                '<div class="bg-white p-3 rounded border mb-3">' . nl2br(htmlspecialchars($evaluation_info['teacher_feedback'])) . '</div>' :
+                                '<div class="alert alert-secondary premium-alert"><i class="fas fa-info-circle me-2"></i>Belum ada feedback. Gunakan tombol di bawah untuk memberikan evaluasi.</div>'
                             ) .
                         '</div>
                         
                         <!-- Action Button -->
                         <div class="mb-4">
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvaluasiGuru">
-                                <i class="fas fa-edit"></i> ' . (!empty($evaluation_info['teacher_feedback']) ? 'Edit Feedback' : 'Berikan Evaluasi') . '
+                            <button class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalEvaluasiGuru">
+                                <i class="fas fa-' . (!empty($evaluation_info['teacher_feedback']) ? 'edit' : 'pen') . ' me-1"></i>' . (!empty($evaluation_info['teacher_feedback']) ? 'Edit Feedback' : 'Berikan Evaluasi') . '
                             </button>
                         </div>
                         
                         <!-- Student Revision Section (Read Only) -->
-                        <hr style="border-color: var(--custom-green);">
-                        <p><strong>Revisi Siswa:</strong></p>' .
+                        <hr>
+                        <p class="mb-2"><strong><i class="fas fa-file-alt me-2 text-info"></i>Revisi Siswa:</strong></p>' .
                         (!empty($evaluation_info['revision_notes']) ?
-                            '<div class="bg-white p-3 rounded mb-3">
-                                <p><strong>Catatan Perbaikan:</strong></p>
-                                <p>' . nl2br(htmlspecialchars($evaluation_info['revision_notes'])) . '</p>
+                            '<div class="bg-white p-3 rounded border mb-3">
+                                <p class="mb-1"><strong>Catatan Perbaikan:</strong></p>
+                                <p class="mb-0">' . nl2br(htmlspecialchars($evaluation_info['revision_notes'])) . '</p>
                             </div>' :
-                            '<div class="alert alert-secondary">Siswa belum mengirimkan revisi.</div>'
+                            '<div class="alert alert-secondary premium-alert"><i class="fas fa-info-circle me-2"></i>Siswa belum mengirimkan revisi.</div>'
                         ) .
                         ($revision_file_url ?
-                            '<p><a href="' . $revision_file_url . '" class="btn btn-success btn-sm" download><i class="fas fa-download"></i> Download Revisi: ' . htmlspecialchars($revision_filename) . '</a></p>' :
+                            '<p><a href="' . $revision_file_url . '" class="btn btn-success rounded-pill" download><i class="fas fa-download me-1"></i> Download Revisi: ' . htmlspecialchars($revision_filename) . '</a></p>' :
                             ''
                         ) .
                     '</div>
                 </div>' :
-                '<h3>Tahap 7: Penilaian & Evaluasi</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 6. Evaluasi dapat dilakukan setelah presentasi selesai.
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">7</span>
+                        <i class="fas fa-clipboard-check" style="color: var(--step7-color);"></i>
+                        <span>Penilaian & Evaluasi</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 6. Evaluasi dapat dilakukan setelah presentasi selesai.
                 </div>'
             ) .
         '</div>
@@ -685,7 +937,7 @@ echo '
 <div class="modal fade" id="modalEvaluasiGuru" tabindex="-1" role="dialog" aria-labelledby="modalEvaluasiGuruLabel" aria-hidden="true" data-bs-backdrop="static">
   <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
-          <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+          <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
               <h5 class="modal-title" id="modalEvaluasiGuruLabel">Evaluasi Proyek Kelompok</h5>
           </div>
           <div class="modal-body">
@@ -703,7 +955,7 @@ echo '
             </form>
           </div>
           <div class="modal-footer">
-              <button id="btnSimpanEvaluasi" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+              <button id="btnSimpanEvaluasi" type="button" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <i class="fas fa-save"></i> Simpan Evaluasi
               </button>
               <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
@@ -725,44 +977,52 @@ echo '
     <div class="row">
         <div class="col-12">' .
             ($step7_status == "Selesai" || $step7_status == "Mengerjakan" ?
-                '<h3>Tahap 8: Refleksi Pembelajaran</h3>
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: var(--custom-green);">
-                        <h4><i class="fas fa-lightbulb"></i> Refleksi Kelompok</h4>
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">8</span>
+                        <i class="fas fa-lightbulb" style="color: var(--step8-color);"></i>
+                        <span>Refleksi Pembelajaran</span>
                     </div>
-                    <div class="card-body" style="background-color: var(--custom-blue);">' .
+                    <span class="status-badge ' . (!empty($reflection_info) ? 'filled"><i class="fas fa-check-circle"></i> Sudah Diisi' : 'empty"><i class="fas fa-clock"></i> Belum Diisi') . '</span>
+                </div>
+                <div class="card step-card step-8">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                        <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Refleksi Kelompok</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #f8fafc;">' .
                     (!empty($reflection_info) ?
-                        '<div class="card mb-3">
-                            <div class="card-body bg-white">
-                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 1</h6>
-                                <p class="fw-bold">Apa pengalaman baru yang kalian dapatkan?</p>
-                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q1'] ?? '-')) . '</p>
-                            </div>
+                        '<div class="info-panel mb-3">
+                            <h6 class="text-muted mb-2"><i class="fas fa-question-circle me-1"></i>Pertanyaan 1</h6>
+                            <p class="fw-bold mb-2">Apa pengalaman baru yang kalian dapatkan?</p>
+                            <div class="bg-white p-3 rounded border">' . nl2br(htmlspecialchars($reflection_info['q1'] ?? '-')) . '</div>
                         </div>
-                        <div class="card mb-3">
-                            <div class="card-body bg-white">
-                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 2</h6>
-                                <p class="fw-bold">Apa kendala yang dihadapi dan solusinya?</p>
-                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q2'] ?? '-')) . '</p>
-                            </div>
+                        <div class="info-panel mb-3">
+                            <h6 class="text-muted mb-2"><i class="fas fa-question-circle me-1"></i>Pertanyaan 2</h6>
+                            <p class="fw-bold mb-2">Apa kendala yang dihadapi dan solusinya?</p>
+                            <div class="bg-white p-3 rounded border">' . nl2br(htmlspecialchars($reflection_info['q2'] ?? '-')) . '</div>
                         </div>
-                        <div class="card mb-3">
-                            <div class="card-body bg-white">
-                                <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 3</h6>
-                                <p class="fw-bold">Bagaimana kesan pembelajaran berbasis proyek ini?</p>
-                                <p class="ms-3">' . nl2br(htmlspecialchars($reflection_info['q3'] ?? '-')) . '</p>
-                            </div>
+                        <div class="info-panel mb-3">
+                            <h6 class="text-muted mb-2"><i class="fas fa-question-circle me-1"></i>Pertanyaan 3</h6>
+                            <p class="fw-bold mb-2">Bagaimana kesan pembelajaran berbasis proyek ini?</p>
+                            <div class="bg-white p-3 rounded border">' . nl2br(htmlspecialchars($reflection_info['q3'] ?? '-')) . '</div>
                         </div>
-                        <p class="text-muted small mt-3">
-                            <i class="fas fa-clock"></i> Dikirim: ' . htmlspecialchars($reflection_info['submitted_at'] ?? '-') . '
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="fas fa-clock me-1"></i> Dikirim: ' . htmlspecialchars($reflection_info['submitted_at'] ?? '-') . '
                         </p>' :
-                        '<div class="alert alert-secondary">Kelompok ini belum mengirimkan refleksi pembelajaran.</div>'
+                        '<div class="alert alert-secondary premium-alert"><i class="fas fa-info-circle me-2"></i>Kelompok ini belum mengirimkan refleksi pembelajaran.</div>'
                     ) .
                     '</div>
                 </div>' :
-                '<h3>Tahap 8: Refleksi Pembelajaran</h3>
-                <div class="alert alert-warning">
-                    Kelompok ini belum menyelesaikan tahap 7 (Penilaian & Evaluasi).
+                '<div class="step-header">
+                    <div class="step-title">
+                        <span class="step-number">8</span>
+                        <i class="fas fa-lightbulb" style="color: var(--step8-color);"></i>
+                        <span>Refleksi Pembelajaran</span>
+                    </div>
+                    <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                </div>
+                <div class="alert alert-warning premium-alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Kelompok ini belum menyelesaikan tahap 7 (Penilaian & Evaluasi).
                 </div>'
             ) .
         '</div>

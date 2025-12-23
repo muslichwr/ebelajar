@@ -110,7 +110,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="container mx-auto p-3">
         <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-green);">
             <div class="col-lg-6 col-12 text-center mb-4 mb-lg-0">
-                <img src="assets/guru-awal(3).svg" class="img-fluid" alt="Ilustrasi">
+                <img src="assets/guru-awal(3).png" class="img-fluid" alt="Ilustrasi">
             </div>
             <div class="col-lg-6 col-12 text-center">
                 <h1 class="fw-bolder text-white"><strong>KELOMPOK <?php echo htmlspecialchars($groups_number); ?></strong></h1>

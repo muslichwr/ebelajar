@@ -32,10 +32,77 @@ $step3_schedule_file = $DB->get_field('ebelajar', 'step3_schedule_file', ['cours
         --custom-blue: #bed4d1;
         --custom-green: #5a9f68;
         --custom-red: #ff5757;
+        /* Step Colors */
+        --step1-color: #10b981;
+        --step2-color: #3b82f6;
+        --step3-color: #06b6d4;
+        --step5-color: #8b5cf6;
+        --step6-color: #f97316;
+        --step7-color: #eab308;
+        --step8-color: #ec4899;
     }
     .logo {
         display: inline-block;
     }
+    /* Premium Card Styles */
+    .step-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    .step-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+    /* Group Card Styles */
+    .group-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-left: 5px solid #3b82f6;
+    }
+    .group-card:hover {
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.25);
+        transform: translateY(-3px);
+    }
+    .group-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        color: white;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    /* Progress Bar Enhancement */
+    .progress-enhanced {
+        height: 12px;
+        border-radius: 8px;
+        background-color: #e5e7eb;
+        overflow: hidden;
+    }
+    .progress-enhanced .progress-bar {
+        background: linear-gradient(90deg, #3b82f6, #6366f1);
+        border-radius: 8px;
+        transition: width 0.6s ease;
+    }
+    /* Premium Alert */
+    .premium-alert {
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    .premium-alert.alert-warning { border-left-color: #f59e0b; }
+    .premium-alert.alert-info { border-left-color: #3b82f6; }
 </style>
 
 <script>
@@ -113,55 +180,67 @@ $step3_schedule_file = $DB->get_field('ebelajar', 'step3_schedule_file', ['cours
     });
 </script>
 
-    <nav class="container navbar navbar-expand-md navbar-light px-2 rounded-2" style="background-color: var(--custom-green); border: 4px solid var(--custom-blue);">
+    <!-- Navbar -->
+    <nav class="container navbar navbar-expand-md navbar-light px-2 shadow-sm" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); border-radius: 0 0 12px 12px;">
         <div class="container-fluid px-md-5">
-            <div class="logo mx-auto">
-                <h3 class="navbar-brand text-white fw-bolder">Activityku</h3>
+            <div class="logo d-flex align-items-center gap-2 mx-auto">
+                <i class="fas fa-layer-group fs-3 text-white"></i>
+                <h3 class="navbar-brand text-white fw-bolder mb-0">Kelompok Dashboard</h3>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-3">
-        <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-green);">
-            <!-- Kolom teks -->
+
+    <!-- Hero Section -->
+    <div class="container mx-auto p-3 mt-3">
+        <div class="row align-items-center p-4 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 16px;">
             <div class="col-lg-6 col-12 text-center text-lg-start mb-4 mb-lg-0">
-                <h3 class="fw-bolder text-white">Pilih Kelompok</h3>
-                <p class="text-white">Silahkan memilih kelompok untuk melihat aktivitas kelompok yang telah dilakukan dalam proses pembelajaran.</p>
+                <span class="badge bg-light text-primary mb-2"><i class="fas fa-users me-1"></i> Monitoring Kelompok</span>
+                <h2 class="fw-bolder text-white mb-2">Pilih Kelompok</h2>
+                <p class="text-white-50">Silahkan memilih kelompok untuk melihat aktivitas kelompok yang telah dilakukan dalam proses pembelajaran.</p>
             </div>
-            <!-- Kolom gambar -->
             <div class="col-lg-6 col-12 text-center">
-                <img src="assets/guru-awal(2).svg" class="img-fluid" alt="Ilustrasi">
+                <img src="assets/guru-awal(2).png" class="img-fluid" alt="Ilustrasi" style="max-height: 180px;">
             </div>
         </div>
     </div>
 
+    <!-- Schedule Card -->
     <div class="container mx-auto p-3" id="dataProjectContainer">
         <div class="row">
             <div class="col-12">
                 <?php if ($step3_schedule_image && $step3_schedule_file != null): ?>
-                    <!-- Jika ada data, tampilkan dalam card -->
-                    <div class="card">
-                        <div class="card-header text-white" style="background-color: var(--custom-green);">
-                            <h4>Jadwal Proyek Untuk Siswa</h4>
+                    <!-- Schedule Card with Data -->
+                    <div class="card step-card" style="border-top: 4px solid #3b82f6;">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Jadwal Proyek Untuk Siswa</h5>
                         </div>
-                        <div class="card-body" style="background-color: var(--custom-blue);">
-                            <img src="<?php echo(new moodle_url('/mod/ebelajar/' . $step3_schedule_image))->out(); ?>" alt="gambar jadwal perencanaan" class="d-block mx-auto w-50 h-50">
+                        <div class="card-body" style="background-color: #f8fafc;">
+                            <img src="<?php echo(new moodle_url('/mod/ebelajar/' . $step3_schedule_image))->out(); ?>" alt="gambar jadwal perencanaan" class="d-block mx-auto rounded shadow-sm" style="max-width: 60%;">
                             <?php if (!empty($step3_schedule_file)): ?>
-                                <p><strong>File:</strong> <a href="<?php echo $step3_schedule_file; ?>" download><?php echo basename($step3_schedule_file); ?></a></p>
+                                <div class="text-center mt-3">
+                                    <a href="<?php echo $step3_schedule_file; ?>" download class="btn btn-outline-success rounded-pill">
+                                        <i class="fas fa-download me-1"></i> Download: <?php echo basename($step3_schedule_file); ?>
+                                    </a>
+                                </div>
                             <?php else: ?>
-                                <p><strong>File:</strong> Tidak ada file yang diunggah.</p>
+                                <p class="text-muted text-center mt-3"><i class="fas fa-file-alt me-1"></i> Tidak ada file yang diunggah.</p>
                             <?php endif; ?>
                         </div>
-                        <div class="card-footer" style="background-color: var(--custom-red);">
-                            <button data-bs-toggle="modal" data-bs-target="#modalEditStep3" class="btn font-bolder" style="background-color: var(--custom-blue); color: var(--custom-green);"><strong>Edit Data</strong></button>
+                        <div class="card-footer bg-light border-0 text-end">
+                            <button data-bs-toggle="modal" data-bs-target="#modalEditStep3" class="btn btn-outline-warning rounded-pill px-4">
+                                <i class="fas fa-edit me-1"></i> Edit Data
+                            </button>
                         </div>
                     </div>
                 <?php else: ?>
                     <div class="d-flex justify-content-end mb-2">
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus"></i>Tambah Data</button>
+                        <button class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalTambahStep3">
+                            <i class="fas fa-plus me-1"></i> Tambah Data
+                        </button>
                     </div>
-                    <div class="alert alert-warning">
-                        Anda belum menambahkan langkah 3 untuk penjadwalan siswa.
+                    <div class="alert alert-warning premium-alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Anda belum menambahkan jadwal proyek untuk siswa.
                     </div>
                 <?php endif; ?>
             </div>
@@ -270,25 +349,36 @@ $step3_schedule_file = $DB->get_field('ebelajar', 'step3_schedule_file', ['cours
         $percentage = ($completed_steps / $total_steps) * 100;
 
         echo '
+        <!-- Group Card -->
         <div class="container mx-auto p-3">
-            <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-blue);">
-                <!-- Kolom teks -->
-                <div class="col-6 col-sm-9 text-start ">
-                    <div class="d-flex align-items-center px-3">
-                        <h4 class="fw-bold" style="color: var(--custom-green);">Kelompok ' . $groupproject->group_number . '</h4>
-                    </div>
-                    <div class="fw-bold fs-5 px-3" style="color: #000000;">
-                        <span>Progress: ' . $completed_steps . '/' . $total_steps . '</span>
-                    </div>
-                    <div class="progress" style="height: 20px;">
-                        <div class="progress-bar" role="progressbar" style="width: ' . $percentage . '%; background-color: var(--custom-green);" aria-valuenow="' . $percentage . '" aria-valuemin="0" aria-valuemax="100">
-                            ' . round($percentage) . '% 
+            <div class="group-card p-4">
+                <div class="row align-items-center">
+                    <!-- Group Info Column -->
+                    <div class="col-12 col-md-8 mb-3 mb-md-0">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="group-badge">' . $groupproject->group_number . '</div>
+                            <div>
+                                <h4 class="fw-bold mb-0" style="color: #333;">Kelompok ' . $groupproject->group_number . '</h4>
+                                <small class="text-muted"><i class="fas fa-users me-1"></i>Project Team</small>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-semibold" style="color: #333;"><i class="fas fa-tasks me-1"></i>Progress</span>
+                                <span class="badge bg-primary text-white">' . $completed_steps . '/' . $total_steps . ' Tahap</span>
+                            </div>
+                            <div class="progress progress-enhanced">
+                                <div class="progress-bar" role="progressbar" style="width: ' . $percentage . '%;" aria-valuenow="' . $percentage . '" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small class="text-muted">' . round($percentage) . '% Selesai</small>
                         </div>
                     </div>
-                </div>
-                <div class="col-3 text-center">
-                    <div class="border-0 border-dark px-3 py-2 w-125 text-center">
-                        <button class="btn text-white" style="background-color: var(--custom-red);" onclick="lihat(' . $groupproject->id . ', ' . $cmid . ')">Lihat Kelompok</button>
+                    <!-- Action Column -->
+                    <div class="col-12 col-md-4 text-center text-md-end">
+                        <button class="btn btn-outline-primary rounded-pill px-4" onclick="lihat(' . $groupproject->id . ', ' . $cmid . ')">
+                            <i class="fas fa-eye me-1"></i> Lihat Kelompok
+                        </button>
                     </div>
                 </div>
             </div>

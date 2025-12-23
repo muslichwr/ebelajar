@@ -130,10 +130,18 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 --custom-blue: #bed4d1;
                 --custom-green: #5a9f68;
                 --custom-red: #ff5757;
+                /* Step Colors */
+                --step1-color: #10b981;
+                --step2-color: #3b82f6;
+                --step3-color: #06b6d4;
+                --step5-color: #8b5cf6;
+                --step6-color: #f97316;
+                --step7-color: #eab308;
+                --step8-color: #ec4899;
             }
         .navskuy {
-            background-color: var(--custom-green); 
-            border: 4px solid var(--custom-blue);
+            background: linear-gradient(135deg, #3b82f6, #6366f1); 
+            border: 4px solid #dbeafe;
             color: #ffffff;
             display: flex;
             justify-content: space-between;
@@ -141,6 +149,132 @@ $results2 = $DB->get_records_sql($query2, $params2);
         }
         .logo {
             display: inline-block;
+        }
+
+        /* Premium Card Styles */
+        .step-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .step-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        .step-card .card-header {
+            border-bottom: none;
+            padding: 1rem 1.25rem;
+        }
+        .step-card .card-body {
+            padding: 1.25rem;
+            background-color: #fafafa;
+        }
+
+        /* Step-specific border-top colors */
+        .step-card.step-1 { border-top: 4px solid var(--step1-color); }
+        .step-card.step-2 { border-top: 4px solid var(--step2-color); }
+        .step-card.step-3 { border-top: 4px solid var(--step3-color); }
+        .step-card.step-5 { border-top: 4px solid var(--step5-color); }
+        .step-card.step-6 { border-top: 4px solid var(--step6-color); }
+        .step-card.step-7 { border-top: 4px solid var(--step7-color); }
+        .step-card.step-8 { border-top: 4px solid var(--step8-color); }
+
+        /* Step Header Styling */
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .step-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .step-title i {
+            font-size: 1.5rem;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-badge.filled {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .status-badge.empty {
+            background-color: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Enhanced Tables */
+        .premium-table {
+            border-radius: 8px;
+            overflow: hidden;
+            border: none;
+        }
+        .premium-table thead th {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 0.85rem;
+        }
+        .premium-table tbody td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-color: #e5e7eb;
+        }
+        .premium-table tbody tr:hover {
+            background-color: #eff6ff;
+        }
+
+        /* Action buttons in step headers */
+        .step-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Premium Alert Styling */
+        .premium-alert {
+            border-radius: 8px;
+            border-left: 4px solid;
+            background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+        }
+        .premium-alert.alert-warning {
+            border-left-color: #f59e0b;
+        }
+        .premium-alert.alert-info {
+            border-left-color: #3b82f6;
         }
     </style>
 
@@ -392,7 +526,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     <div class="modal fade" id="${modalId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                                <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                                     <h5 class="modal-title" id="exampleModalLabel">Edit Kegiatan</h5>
                                 </div>
                                 <div class="modal-body">
@@ -406,7 +540,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                             <label for="nama_kegiatan" class="form-label">Nama Kegiatan</label>
                                             <input type="text" id="nama_kegiatan" name="nama_kegiatan" 
                                                 class="form-control rounded-2 px-3 py-2" 
-                                                style="color:#000000;" 
+                                                style="color:#333333;" 
                                                 placeholder="Tambah Kegiatan" 
                                                 value="${namaKegiatan}" required>
                                         </div>
@@ -416,7 +550,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                             <label for="uraian_kegiatan" class="form-label">Uraian Kegiatan</label>
                                             <textarea id="uraian_kegiatan" name="uraian_kegiatan" 
                                                 class="form-control shadow-sm rounded-lg p-3" 
-                                                style="color:#000000; border: 1px solid #000000;" 
+                                                style="color:#333333; border: 1px solid #000000;" 
                                                 placeholder="Masukkan Uraian Kegiatan" 
                                                 rows="4" required>${uraianKegiatan}</textarea>
                                         </div>
@@ -426,7 +560,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                             <label for="tanggal_kegiatan" class="form-label">Tanggal Kegiatan</label>
                                             <input type="date" id="tanggal_kegiatan" name="tanggal_kegiatan" 
                                                 class="form-control rounded-2 px-3 py-2" 
-                                                style="color:#000000;" 
+                                                style="color:#333333;" 
                                                 value="${tanggalKegiatan}" required>
                                         </div>
 
@@ -435,13 +569,13 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                             <label for="bukti_kegiatan" class="form-label">Bukti Kegiatan</label>
                                             <input type="file" id="bukti_kegiatan" name="bukti_kegiatan" 
                                                 class="form-control rounded-2 px-3 py-2" 
-                                                style="color:#000000;" 
+                                                style="color:#333333;" 
                                                 accept=".jpg, .jpeg, .png, .gif">
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button id="btnUpdateActivity" type="button" class="btn rounded-pill w-25 btnUpdateActivity" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                                    <button id="btnUpdateActivity" type="button" class="btn rounded-pill w-25 btnUpdateActivity" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                                     <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
                                 </div>
                             </div>
@@ -650,11 +784,11 @@ $results2 = $DB->get_records_sql($query2, $params2);
     
 
 
-  <nav class="container navbar navskuy navbar-expand-md navbar-light px-2">
+  <nav class="container navbar navskuy navbar-expand-md navbar-light px-2 shadow-sm" style="border-radius: 0 0 12px 12px;">
     <div class="container-fluid px-md-5">
-        <div class="logo">
-            <!-- <img  src="images/logo_elearning.png" alt="Logo e-legbook" style="width: 60px; height: 150px;"> -->
-            <h3 class="navbar-brand text-white fw-bolder">Activityku</h3>
+        <div class="logo d-flex align-items-center gap-2">
+            <i class="fas fa-clipboard-list fs-3 text-white"></i>
+            <h3 class="navbar-brand text-white fw-bolder mb-0">Activityku</h3>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -668,9 +802,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 <div id="dataButtonLoad">
                 <?php
                     if ($result) {
-                        echo '<button class="btn mr-md-2 mb-2 mb-md-0 rounded-pill px-4" style="background-color: var(--custom-blue); color:#000000" data-bs-toggle="modal" data-bs-target="#modalDataDiriUbahData"><i class="fas fa-plus"></i> Ubah Data Diri</button>';
+                        echo '<button class="btn mb-2 mb-md-0 rounded-pill px-4 d-flex align-items-center gap-2" style="background-color: rgba(255,255,255,0.9); color:#333;" data-bs-toggle="modal" data-bs-target="#modalDataDiriUbahData"><i class="fas fa-user-edit"></i> Ubah Data Diri</button>';
                     } else {
-                        echo '<button class="btn mr-md-2 mb-2 mb-md-0 rounded-pill px-4" style="background-color: var(--custom-red); color:#FFFFFF" data-bs-toggle="modal" data-bs-target="#modalDataDiri"><i class="fas fa-plus"></i> Tambah Data Diri</button>';
+                        echo '<button class="btn mb-2 mb-md-0 rounded-pill px-4 d-flex align-items-center gap-2" style="background-color: var(--custom-red); color:#FFFFFF;" data-bs-toggle="modal" data-bs-target="#modalDataDiri"><i class="fas fa-user-plus"></i> Tambah Data Diri</button>';
                     }
                 ?>   
                 </div>   
@@ -682,7 +816,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
   <div class="modal fade" id="modalDataDiri" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                 <h5 class="modal-title" id="exampleModalLabel">Tambah Data Diri</h5>
               </div>
               <div class="modal-body">
@@ -692,7 +826,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="nama_siswa" class="form-label">Nama Siswa</label>
                         <input type="text" id="nama_siswa" name="nama_siswa" placeholder="Nama Siswa" 
                             class="form-control rounded-2 px-3" 
-                            style="color:#000000;" 
+                            style="color:#333333;" 
                             value="<?php 
                             $firstname = isset($_SESSION["USER"]->firstname) ? $_SESSION["USER"]->firstname : "";
                             $lastname = isset($_SESSION["USER"]->lastname) ? $_SESSION["USER"]->lastname : "";
@@ -704,7 +838,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="no_kelompok" class="form-label">Nomor Kelompok</label>
                         <select id="no_kelompok" name="no_kelompok" 
                             class="form-select rounded-2 px-3 py-2 mt-2" 
-                            style="color:#000000;" required>
+                            style="color:#333333;" required>
                             <option value="">Pilih No Kelompok</option>
                             <?php
                             foreach ($groupproject_records as $groupproject) {
@@ -718,12 +852,12 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="jobdesk" class="form-label">Jobdesk</label>
                         <input type="text" id="jobdesk" name="jobdesk" placeholder="Jobdesk" 
                             class="form-control rounded-2 px-3" 
-                            style="color:#000000;" required>
+                            style="color:#333333;" required>
                     </div>
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpan" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#000000">Simpan</button>
+                  <button id="btnSimpan" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -733,7 +867,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
   <div class="modal fade" id="modalDataDiriUbahData" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Tambah Data Diri</h5>
               </div>
               <div class="modal-body">
@@ -746,7 +880,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="nama_siswa" class="form-label">Nama Siswa</label>
                             <input type="text" id="nama_siswa" name="nama_siswa" placeholder="Nama Siswa" 
                                 class="form-control rounded-2 px-3" 
-                                style="color:#000000;" 
+                                style="color:#333333;" 
                                 value="<?php echo $result->name_student; ?>" readonly required>
                         </div>
 
@@ -754,7 +888,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="no_kelompok" class="form-label">Nomor Kelompok</label>
                             <select id="no_kelompok" name="no_kelompok" 
                                 class="form-select rounded-2 px-3 py-2 mt-2" 
-                                style="color:#000000;" required>
+                                style="color:#333333;" required>
                                 <?php
                                 foreach ($groupproject_records as $groupproject) {
                                     $selected = ($i == $result->groupproject) ? 'selected' : '';
@@ -768,7 +902,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="jobdesk" class="form-label">Jobdesk</label>
                             <input type="text" id="jobdesk" name="jobdesk" placeholder="Jobdesk" 
                                 class="form-control rounded-2 px-3" 
-                                style="color:#000000;" 
+                                style="color:#333333;" 
                                 value="<?php echo $result->jobdesk; ?>" required>
                         </div>
                     </form>
@@ -776,92 +910,145 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdated" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnUpdated" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
       </div>
   </div>
 
-    <div class="container mx-auto p-3">
-        <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-green);">
+    <!-- Hero Welcome Banner -->
+    <div class="container mx-auto p-3 mt-4">
+        <div class="row align-items-center p-4 shadow-sm" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); border-radius: 16px;">
             <div class="col-lg-6 col-12 text-center text-lg-start mb-4 mb-lg-0">
-                <h3 class="fw-bolder text-white">Selamat Datang!</h3>
-                <p class="text-white">Silahkan melengkapi kegiatan anda selama melakukan aktivitas pembelajaran secara kelompok.</p>
+                <span class="badge bg-light text-primary mb-2"><i class="fas fa-graduation-cap me-1"></i> Project-Based Learning</span>
+                <h2 class="fw-bolder text-white mb-3">Selamat Datang!</h2>
+                <p class="text-white-50 fs-5">Silahkan melengkapi kegiatan anda selama melakukan aktivitas pembelajaran secara kelompok.</p>
             </div>
             <!-- Kolom gambar -->
             <div class="col-lg-6 col-12 text-center">
-                <img src="assets/guru-awal(2).svg" class="img-fluid" alt="Ilustrasi">
+                <img src="assets/guru-awal(2).png" class="img-fluid" alt="Ilustrasi" style="max-height: 200px;">
             </div>
         </div>
     </div>
 
+    <!-- View Other Groups Banner -->
     <div class="container mx-auto p-3">
-        <div class="row align-items-center border rounded-2 p-3" style="background-color: var(--custom-green);">
+        <div class="row align-items-center p-4 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 16px;">
             <!-- Kolom gambar -->
-            <div class="col-lg-6 col-12 text-center">
-                <img src="assets/guru-awal(4).svg" class="img-fluid" alt="Ilustrasi">
+            <div class="col-lg-5 col-12 text-center mb-4 mb-lg-0">
+                <img src="assets/guru-awal(4).svg" class="img-fluid" alt="Ilustrasi" style="max-height: 180px;">
             </div>
-            <div class="col-lg-6 col-12 text-center text-lg-start mb-4 mb-lg-0">
-                <h3 class="fw-bolder text-white">Perlu melihat kelompok lain?</h3>
-                <p class="text-white">Silahkan pilih tombol dibawah ini untuk melihat kelompok lain</p>
+            <div class="col-lg-7 col-12 text-center text-lg-start">
+                <h4 class="fw-bolder text-white mb-2"><i class="fas fa-users me-2"></i>Perlu melihat kelompok lain?</h4>
+                <p class="text-white-50 mb-3">Silahkan pilih tombol dibawah ini untuk melihat kelompok lain</p>
                 <?php if ($result == null): ?>
-                    <div class="d-flex justify-content-lg-start justify-content-center mb-2">
-                        <button class="btn text-black bg-secondary" disabled><i class="fas fa-xmark"></i> Tambahkan Data Diri dulu</button>
-                    </div>
+                    <button class="btn btn-secondary rounded-pill px-4" disabled>
+                        <i class="fas fa-lock me-1"></i> Tambahkan Data Diri dulu
+                    </button>
                 <?php else: ?>
-                    <div class="d-flex justify-content-lg-start justify-content-center mb-2">
-                        <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalLihatKelompok"><i class="fas fa-eye"></i> Lihat Kelompok Lain</button>
-                    </div>
+                    <button class="btn btn-light text-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalLihatKelompok">
+                        <i class="fas fa-eye me-1"></i> Lihat Kelompok Lain
+                    </button>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <div class="container mx-auto p-3">   
+    <!-- User Profile Info Card -->
+    <div class="container mx-auto p-3">
         <div id="dataContainer">
             <?php
                 if ($result) {
                     echo '
-                    <div class="d-flex justify-content-center gap-2">
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center text-white" style="background-color: var(--custom-green);">' . $result->name_student . '</div>
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center text-white" style="background-color: var(--custom-green);">Kelompok ' .$result->group_number . '</div>
-                    </div>
-                    <div class="d-flex justify-content-center gap-2 mt-3">
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center text-white" style="background-color: var(--custom-green);">Jobdesk : ' . $result->jobdesk . '</div>
-                    </div>';            
+                    <div class="card shadow-sm" style="border-radius: 16px; border: none;">
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                                        <i class="fas fa-user-circle text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0 fw-bold">' . htmlspecialchars($result->name_student) . '</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                                        <i class="fas fa-users text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0 fw-bold">Kelompok ' . $result->group_number . '</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">
+                                        <i class="fas fa-briefcase text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0 fw-bold">' . htmlspecialchars($result->jobdesk) . '</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
                 } else {
                     echo '
-                    <div class="d-flex justify-content-center gap-2">
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center" style="background-color: var(--custom-green);">Belum menambahkan data</div>
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center" style="background-color: var(--custom-green);">Belum gabung kelompok</div>
-                    </div>
-                    <div class="d-flex justify-content-center gap-2 mt-3">
-                        <div class="border rounded-2 px-3 py-2 w-75 text-center" style="background-color: var(--custom-green);">Belum ada jobdesk</div>
-                    </div>
-                    ';
+                    <div class="card shadow-sm" style="border-radius: 16px; border: none;">
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center bg-secondary">
+                                        <i class="fas fa-user-circle text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0">Belum ada data</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center bg-secondary">
+                                        <i class="fas fa-users text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0">Belum gabung kelompok</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 rounded-3 text-center bg-secondary">
+                                        <i class="fas fa-briefcase text-white fs-2 mb-2"></i>
+                                        <p class="text-white mb-0">Belum ada jobdesk</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
                 }
             ?>
-        </div>  
+        </div>
     </div>
 
 
     <?php if ($result == null): ?>
-        <h1 class="text-center">Silahkan gabung kelompok terlebih dahulu!</h1>
+        <div class="container mx-auto p-3">
+            <div class="alert alert-warning premium-alert text-center" style="border-radius: 12px;">
+                <i class="fas fa-exclamation-triangle me-2 fs-4"></i>
+                <span class="fw-bold fs-5">Silahkan gabung kelompok terlebih dahulu!</span>
+            </div>
+        </div>
     <?php else: ?>
         <div class="container mx-auto p-3" id="dataStep1">
             <div class="row">
                 <div class="col-12">
                     <?php if ($step1_status == "Selesai"): ?>
-                        <h3>Tahap 1</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep1"><i class="fas fa-plus"></i> Edit Rumusan masalah</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Rumusan Masalah & Analisis</h4>
+                        <?php $hasStep1Data = !empty($step->step1_formulation) || !empty($step->analysis_data); ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">1</span>
+                                <i class="fas fa-brain" style="color: var(--step1-color);"></i>
+                                <span>Rumusan Masalah & Analisis</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep1Data 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalEditStep1"><i class="fas fa-edit me-1"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-1">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Rumusan Masalah & Analisis</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
                                 <p>
                                     <strong>Rumusan masalah:</strong> 
@@ -891,10 +1078,10 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     <strong>Indikator Penyebab Masalah:</strong>
                                     <div class="mt-2">
                                         <?php foreach ($indicators_selesai as $idx => $ind): ?>
-                                        <div class="card mb-2" style="border-left: 4px solid var(--custom-green);">
+                                        <div class="card mb-2" style="border-left: 4px solid #3b82f6;">
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex align-items-start">
-                                                    <span class="badge bg-success me-2"><?php echo ($idx + 1); ?></span>
+                                                    <span class="badge bg-primary me-2"><?php echo ($idx + 1); ?></span>
                                                     <div>
                                                         <strong><?php echo htmlspecialchars($ind['indicator'] ?? ''); ?></strong>
                                                         <?php if (!empty($ind['analysis'])): ?>
@@ -916,15 +1103,26 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php else: ?>
-                        <h3>Tahap 1</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep1"><i class="fas fa-plus"></i> Tambah Rumusan masalah</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Rumusan Masalah</h4>
+                        <?php $hasStep1DataMengerjakan = !empty($step->step1_formulation) || !empty($step->analysis_data); ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">1</span>
+                                <i class="fas fa-brain" style="color: var(--step1-color);"></i>
+                                <span>Rumusan Masalah & Analisis</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep1DataMengerjakan 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep1"><i class="fas fa-plus me-1"></i> Tambah</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-1">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Rumusan Masalah</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Studi Kasus:</strong> <?php echo $ebelajar_records->case_study; ?></p>
                                 <p>
                                     <strong>Rumusan masalah:</strong> 
@@ -954,10 +1152,10 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     <strong>Indikator Penyebab Masalah:</strong>
                                     <div class="mt-2">
                                         <?php foreach ($indicators as $index => $item): ?>
-                                        <div class="card mb-2" style="border-left: 4px solid var(--custom-green);">
+                                        <div class="card mb-2" style="border-left: 4px solid #3b82f6;">
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex align-items-start">
-                                                    <span class="badge bg-success me-2"><?php echo ($index + 1); ?></span>
+                                                    <span class="badge bg-primary me-2"><?php echo ($index + 1); ?></span>
                                                     <div>
                                                         <strong><?php echo htmlspecialchars($item['indicator'] ?? ''); ?></strong>
                                                         <?php if (!empty($item['analysis'])): ?>
@@ -987,15 +1185,27 @@ $results2 = $DB->get_records_sql($query2, $params2);
             <div class="row">
                 <div class="col-12">
                     <?php if ($step2_status == "Selesai"): ?>
-                        <h3>Tahap 2 dan Tahap 3</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalEditStep2"><i class="fas fa-edit"></i> Edit Jadwal Proyek</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Perencanaan & Jadwal Proyek</h4>
+                        <?php $hasStep2Data = !empty($step->planning_data) && $step->planning_data != '[]'; ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">2</span>
+                                <span class="step-number">3</span>
+                                <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                                <span>Perencanaan & Jadwal Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep2Data 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalEditStep2"><i class="fas fa-edit me-1"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-2">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Perencanaan & Jadwal Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Jadwal pelaksanaan proyek kelompok Anda:</strong></p>
                                 <?php 
                                 if (!empty($step->planning_data)) {
@@ -1003,8 +1213,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     if (is_array($schedule_data) && count($schedule_data) > 0):
                                 ?>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped bg-white">
-                                        <thead class="table-success">
+                                    <table class="table table-hover table-striped premium-table bg-white">
                                             <tr>
                                                 <th style="width: 50px;">No</th>
                                                 <th>Kegiatan</th>
@@ -1037,15 +1246,26 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Mengerjakan"): ?>
-                        <h3>Tahap 2 dan Tahap 3</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep2"><i class="fas fa-plus"></i> Tambah Jadwal Proyek</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Perencanaan & Jadwal Proyek</h4>
+                        <?php $hasStep2DataM = !empty($step->planning_data) && $step->planning_data != '[]'; ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">2</span>
+                                <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                                <span>Perencanaan & Jadwal Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep2DataM 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep2"><i class="fas fa-plus me-1"></i> Tambah</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-2">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Perencanaan & Jadwal Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Silahkan susun jadwal pelaksanaan proyek kelompok Anda.</strong></p>
                                 <?php 
                                 if (!empty($step->planning_data)) {
@@ -1053,8 +1273,8 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     if (is_array($schedule_data) && count($schedule_data) > 0):
                                 ?>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped bg-white">
-                                        <thead class="table-success">
+                                    <table class="table table-hover table-striped premium-table bg-white">
+                                        <thead>
                                             <tr>
                                                 <th style="width: 50px;">No</th>
                                                 <th>Kegiatan</th>
@@ -1087,9 +1307,16 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step2_status == "Belum Selesai"): ?>
-                        <h3>Tahap 2 dan Tahap 3</h3>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menyelesaikan tahap 1, selesaikan terlebih dahulu tahap 1.
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">2</span>
+                                <i class="fas fa-calendar-alt" style="color: var(--step2-color);"></i>
+                                <span>Perencanaan & Jadwal Proyek</span>
+                            </div>
+                            <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                        </div>
+                        <div class="alert alert-warning premium-alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Kelompok mu belum menyelesaikan tahap 1, selesaikan terlebih dahulu tahap 1.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1100,15 +1327,26 @@ $results2 = $DB->get_records_sql($query2, $params2);
             <div class="row">
                 <div class="col-12">
                     <?php if ($step3_status == "Selesai"): ?>
-                        <h3>Tahap 4</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-green);" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus"></i> Tambah Catatan Logbook</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Logbook Pelaksanaan Proyek</h4>
+                        <?php $hasStep3Data = !empty($step->logbook_data) && $step->logbook_data != '[]'; ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">4</span>
+                                <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                                <span>Logbook Pelaksanaan</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep3Data 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus me-1"></i> Tambah</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-3">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Logbook Pelaksanaan Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Catatan harian pelaksanaan proyek kelompok Anda:</strong></p>
                                 <?php 
                                 if (!empty($step->logbook_data)) {
@@ -1116,8 +1354,8 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     if (is_array($logbook_entries) && count($logbook_entries) > 0):
                                 ?>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped bg-white">
-                                        <thead class="table-success">
+                                    <table class="table table-hover table-striped premium-table bg-white">
+                                        <thead>
                                             <tr>
                                                 <th style="width: 5%;">No</th>
                                                 <th style="width: 12%;">Tanggal</th>
@@ -1135,7 +1373,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                                 <td><?php echo nl2br(htmlspecialchars($entry['activity'] ?? '')); ?></td>
                                                 <td><?php echo nl2br(htmlspecialchars($entry['obstacles'] ?? '-')); ?></td>
                                                 <td class="text-center">
-                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-success' : 'bg-info'; ?>">
+                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-primary' : 'bg-info'; ?>">
                                                         <?php echo htmlspecialchars($entry['progress'] ?? 0); ?>%
                                                     </span>
                                                 </td>
@@ -1143,7 +1381,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                                     <?php 
                                                     $progress = $entry['progress'] ?? 0;
                                                     if ($progress >= 100) {
-                                                        echo '<span class="badge bg-success">Selesai</span>';
+                                                        echo '<span class="badge bg-primary">Selesai</span>';
                                                     } elseif ($progress >= 50) {
                                                         echo '<span class="badge bg-warning text-dark">Progres</span>';
                                                     } else {
@@ -1167,15 +1405,26 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step3_status == "Mengerjakan"): ?>
-                        <h3>Tahap 3</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus"></i> Tambah Catatan Logbook</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Logbook Pelaksanaan Proyek</h4>
+                        <?php $hasStep3DataM = !empty($step->logbook_data) && $step->logbook_data != '[]'; ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">4</span>
+                                <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                                <span>Logbook Pelaksanaan</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <?php echo $hasStep3DataM 
+                                    ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                    : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                                ?>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep3"><i class="fas fa-plus me-1"></i> Tambah</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-3">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Logbook Pelaksanaan Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Silahkan catat progres pelaksanaan proyek kelompok Anda:</strong></p>
                                 <?php 
                                 if (!empty($step->logbook_data)) {
@@ -1183,8 +1432,8 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                     if (is_array($logbook_entries) && count($logbook_entries) > 0):
                                 ?>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-striped bg-white">
-                                        <thead class="table-success">
+                                    <table class="table table-hover table-striped premium-table bg-white">
+                                        <thead>
                                             <tr>
                                                 <th style="width: 5%;">No</th>
                                                 <th style="width: 12%;">Tanggal</th>
@@ -1202,7 +1451,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                                 <td><?php echo nl2br(htmlspecialchars($entry['activity'] ?? '')); ?></td>
                                                 <td><?php echo nl2br(htmlspecialchars($entry['obstacles'] ?? '-')); ?></td>
                                                 <td class="text-center">
-                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-success' : 'bg-info'; ?>">
+                                                    <span class="badge <?php echo ($entry['progress'] ?? 0) >= 100 ? 'bg-primary' : 'bg-info'; ?>">
                                                         <?php echo htmlspecialchars($entry['progress'] ?? 0); ?>%
                                                     </span>
                                                 </td>
@@ -1210,7 +1459,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                                     <?php 
                                                     $progress = $entry['progress'] ?? 0;
                                                     if ($progress >= 100) {
-                                                        echo '<span class="badge bg-success">Selesai</span>';
+                                                        echo '<span class="badge bg-primary">Selesai</span>';
                                                     } elseif ($progress >= 50) {
                                                         echo '<span class="badge bg-warning text-dark">Progres</span>';
                                                     } else {
@@ -1234,9 +1483,16 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step3_status == "Belum Selesai"): ?>
-                        <h3>Tahap 3</h3>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menyelesaikan tahap 2, selesaikan terlebih dahulu tahap 2.
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">4</span>
+                                <i class="fas fa-book-open" style="color: var(--step3-color);"></i>
+                                <span>Logbook Pelaksanaan</span>
+                            </div>
+                            <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                        </div>
+                        <div class="alert alert-warning premium-alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Kelompok mu belum menyelesaikan tahap 2, selesaikan terlebih dahulu tahap 2.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1261,7 +1517,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 <div class="d-flex justify-content-between px-0 px-md-3 py-2">
                     <div class="mr-auto"></div>
                     <div class="mr-0 px-0 px-md-3">
-                        <button class="btn mr-md-2 mb-2 mb-md-0 rounded-pill px-4" style="background-color: var(--custom-green); color:#FFFFFF" data-bs-toggle="modal" data-bs-target="#modalTambahKegiatan"><i class="fas fa-plus"></i> Tambah Kegiatan</button>
+                        <button class="btn mr-md-2 mb-2 mb-md-0 rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#FFFFFF" data-bs-toggle="modal" data-bs-target="#modalTambahKegiatan"><i class="fas fa-plus"></i> Tambah Kegiatan</button>
                     </div>
                 </div>
                 <table id="table" class="table table-striped table-bordered" style="width:100%">
@@ -1288,7 +1544,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 <td>' . htmlspecialchars($row->name_activity) . '</td>
                                 <td>' . konversiTanggal($row->date_activity) . '</td>
                                 <td class="text-center">
-                                    <button class="btn rounded-pill lihat-btn" style="background-color: var(--custom-green); color:#FFFFFF" data-bs-toggle="modal" data-bs-target="#modalLihatFoto" data-foto-url="' . htmlspecialchars($row->file_path) . '">Lihat</button>
+                                    <button class="btn rounded-pill lihat-btn" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#FFFFFF" data-bs-toggle="modal" data-bs-target="#modalLihatFoto" data-foto-url="' . htmlspecialchars($row->file_path) . '">Lihat</button>
                                 </td>';
 
                             if (!empty($row->feedback_teacher)) {
@@ -1306,7 +1562,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 echo '
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <button class="btn rounded-pill btnedit" style="background-color: var(--custom-green); color:#FFFFFF" 
+                                            <button class="btn rounded-pill btnedit" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#FFFFFF" 
                                                     data-id="' . $row->id . '"
                                                     data-groupproject="' . htmlspecialchars($row->groupproject) . '" 
                                                     data-nama="' . htmlspecialchars($row->name_activity) . '" 
@@ -1375,15 +1631,23 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     ?>
                     
                     <?php if ($step5_status == "Selesai" && $product_info): ?>
-                        <h3>Tahap 5: Pengumpulan Proyek</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-edit"></i> Edit Data Proyek</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Data Proyek Kelompok</h4>
+                        <?php $hasStep5Data = !empty($step->product_data); ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">5</span>
+                                <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                                <span>Pengumpulan Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>
+                                <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-edit me-1"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-5">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Data Proyek Kelompok</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <p><strong>Deskripsi Proyek:</strong></p>
                                 <p><?php echo nl2br(htmlspecialchars($product_info['description'] ?? 'Tidak ada deskripsi.')); ?></p>
                                 
@@ -1397,7 +1661,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 <?php if ($product_file_url): ?>
                                 <p><strong>File Dokumen Proyek:</strong></p>
                                 <p>
-                                    <a href="<?php echo $product_file_url; ?>" class="btn btn-success btn-sm" download>
+                                    <a href="<?php echo $product_file_url; ?>" class="btn btn-primary btn-sm" download>
                                         <i class="fas fa-download"></i> Download: <?php echo htmlspecialchars($product_filename); ?>
                                     </a>
                                 </p>
@@ -1411,24 +1675,38 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step5_status == "Mengerjakan"): ?>
-                        <h3>Tahap 5: Pengumpulan Proyek</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-plus"></i> Kumpulkan Proyek</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Pengumpulan Proyek</h4>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">5</span>
+                                <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                                <span>Pengumpulan Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
-                                <div class="alert alert-info mb-0">
-                                    <i class="fas fa-info-circle"></i> Silahkan kumpulkan dokumen proyek kelompok Anda (laporan/presentasi/ZIP) beserta deskripsi dan link video (jika ada).
+                            <div class="step-actions">
+                                <span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep5"><i class="fas fa-plus me-1"></i> Kumpulkan</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-5">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Pengumpulan Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
+                                <div class="alert alert-info premium-alert mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Silahkan kumpulkan dokumen proyek kelompok Anda (laporan/presentasi/ZIP) beserta deskripsi dan link video (jika ada).
                                 </div>
                             </div>
                         </div>
                     <?php elseif ($step5_status == "Belum Selesai"): ?>
-                        <h3>Tahap 5: Pengumpulan Proyek</h3>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menyelesaikan tahap 4, selesaikan terlebih dahulu tahap 4.
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">5</span>
+                                <i class="fas fa-box-open" style="color: var(--step5-color);"></i>
+                                <span>Pengumpulan Proyek</span>
+                            </div>
+                            <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                        </div>
+                        <div class="alert alert-warning premium-alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Kelompok mu belum menyelesaikan tahap 4, selesaikan terlebih dahulu tahap 4.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1474,15 +1752,23 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     ?>
                     
                     <?php if ($step6_status == "Selesai" && $presentation_info): ?>
-                        <h3>Tahap 6: Presentasi Proyek</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn text-white" style="background-color: var(--custom-red);" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-edit"></i> Edit Presentasi</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Data Presentasi Kelompok</h4>
+                        <?php $hasStep6Data = !empty($step->presentation_data); ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">6</span>
+                                <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                                <span>Presentasi Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="step-actions">
+                                <span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>
+                                <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-edit me-1"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-6">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-presentation me-2"></i>Data Presentasi Kelompok</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <?php if (!empty($presentation_info['link_presentation'])): ?>
                                 <p><strong>Link Presentasi (Canva/Google Slides):</strong></p>
                                 <p>
@@ -1495,7 +1781,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                                 <?php if ($presentation_file_url): ?>
                                 <p><strong>File Presentasi:</strong></p>
                                 <p>
-                                    <a href="<?php echo $presentation_file_url; ?>" class="btn btn-success btn-sm" download>
+                                    <a href="<?php echo $presentation_file_url; ?>" class="btn btn-primary btn-sm" download>
                                         <i class="fas fa-download"></i> Download: <?php echo htmlspecialchars($presentation_filename); ?>
                                     </a>
                                 </p>
@@ -1516,24 +1802,38 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                         </div>
                     <?php elseif ($step6_status == "Mengerjakan"): ?>
-                        <h3>Tahap 6: Presentasi Proyek</h3>
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-plus"></i> Kumpulkan Presentasi</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Presentasi Proyek</h4>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">6</span>
+                                <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                                <span>Presentasi Proyek</span>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
-                                <div class="alert alert-info mb-0">
-                                    <i class="fas fa-info-circle"></i> Silahkan kumpulkan materi presentasi kelompok Anda (PPT/PDF) atau link presentasi online (Canva/Google Slides).
+                            <div class="step-actions">
+                                <span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep6"><i class="fas fa-plus me-1"></i> Kumpulkan</button>
+                            </div>
+                        </div>
+                        <div class="card step-card step-6">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-presentation me-2"></i>Presentasi Proyek</h5>
+                            </div>
+                            <div class="card-body" style="background-color: #f8fafc;">
+                                <div class="alert alert-info premium-alert mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Silahkan kumpulkan materi presentasi kelompok Anda (PPT/PDF) atau link presentasi online (Canva/Google Slides).
                                 </div>
                             </div>
                         </div>
                     <?php elseif ($step6_status == "Belum Selesai"): ?>
-                        <h3>Tahap 6: Presentasi Proyek</h3>
-                        <div class="alert alert-warning">
-                            Kelompok mu belum menyelesaikan tahap 5, selesaikan terlebih dahulu tahap 5.
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">6</span>
+                                <i class="fas fa-chalkboard-teacher" style="color: var(--step6-color);"></i>
+                                <span>Presentasi Proyek</span>
+                            </div>
+                            <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                        </div>
+                        <div class="alert alert-warning premium-alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Kelompok mu belum menyelesaikan tahap 5, selesaikan terlebih dahulu tahap 5.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1580,16 +1880,27 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     ?>
                     
                     <?php if ($step6_status == "Selesai" || $step7_status != "Belum Selesai"): ?>
-                        <h3>Tahap 7: Penilaian & Evaluasi</h3>
+                        <?php $hasStep7Data = !empty($evaluation_info['teacher_feedback']) || !empty($evaluation_info['revision_file']); ?>
+                        <div class="step-header">
+                            <div class="step-title">
+                                <span class="step-number">7</span>
+                                <i class="fas fa-clipboard-check" style="color: var(--step7-color);"></i>
+                                <span>Penilaian & Evaluasi</span>
+                            </div>
+                            <?php echo $hasStep7Data 
+                                ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Ada Evaluasi</span>'
+                                : '<span class="status-badge empty"><i class="fas fa-clock"></i> Menunggu Evaluasi Guru</span>';
+                            ?>
+                        </div>
                         
                         <!-- Section A: Feedback Guru -->
-                        <div class="card mb-3">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4>Evaluasi Guru</h4>
+                        <div class="card step-card step-7 mb-3">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Evaluasi Guru</h5>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <?php if (!empty($evaluation_info['teacher_feedback'])): ?>
-                                    <div class="alert alert-success">
+                                    <div class="alert alert-info">
                                         <h5><i class="fas fa-comment-dots"></i> Feedback Guru:</h5>
                                         <p><?php echo nl2br(htmlspecialchars($evaluation_info['teacher_feedback'])); ?></p>
                                     </div>
@@ -1643,15 +1954,28 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 ?>
                 
                 <?php if ($step7_status == "Selesai" || $step7_status == "Mengerjakan"): ?>
-                    <h3>Tahap 8: Refleksi Pembelajaran</h3>
+                    <?php $hasStep8Data = !empty($reflection_info); ?>
+                    <div class="step-header">
+                        <div class="step-title">
+                            <span class="step-number">8</span>
+                            <i class="fas fa-lightbulb" style="color: var(--step8-color);"></i>
+                            <span>Refleksi Pembelajaran</span>
+                        </div>
+                        <div class="step-actions">
+                            <?php echo $hasStep8Data 
+                                ? '<span class="status-badge filled"><i class="fas fa-check-circle"></i> Sudah Diisi</span>'
+                                : '<span class="status-badge empty"><i class="fas fa-clock"></i> Belum Diisi</span>';
+                            ?>
+                        </div>
+                    </div>
                     
                     <?php if ($step8_status == "Selesai" && !empty($reflection_info)): ?>
                         <!-- Display Reflection Answers -->
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4><i class="fas fa-lightbulb"></i> Refleksi Kelompok</h4>
+                        <div class="card step-card step-8">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Refleksi Kelompok</h5>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
+                            <div class="card-body" style="background-color: #f8fafc;">
                                 <div class="card mb-3">
                                     <div class="card-body bg-white">
                                         <h6 class="card-subtitle mb-2 text-muted">Pertanyaan 1</h6>
@@ -1684,25 +2008,32 @@ $results2 = $DB->get_records_sql($query2, $params2);
                     <?php else: ?>
                         <!-- Show Form Button -->
                         <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahStep8">
-                                <i class="fas fa-pen"></i> Isi Refleksi
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalTambahStep8">
+                                <i class="fas fa-pen me-1"></i> Isi Refleksi
                             </button>
                         </div>
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--custom-green);">
-                                <h4><i class="fas fa-lightbulb"></i> Refleksi Pembelajaran</h4>
+                        <div class="card step-card step-8">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Refleksi Pembelajaran</h5>
                             </div>
-                            <div class="card-body" style="background-color: var(--custom-blue);">
-                                <div class="alert alert-info mb-0">
-                                    <i class="fas fa-info-circle"></i> Silahkan isi refleksi pembelajaran kelompok untuk menyelesaikan proyek PjBL.
+                            <div class="card-body" style="background-color: #f8fafc;">
+                                <div class="alert alert-info premium-alert mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Silahkan isi refleksi pembelajaran kelompok untuk menyelesaikan proyek PjBL.
                                 </div>
                             </div>
                         </div>
                     <?php endif; ?>
                 <?php else: ?>
-                    <h3>Tahap 8: Refleksi Pembelajaran</h3>
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i> Selesaikan tahap 7 (Penilaian & Evaluasi) terlebih dahulu.
+                    <div class="step-header">
+                        <div class="step-title">
+                            <span class="step-number">8</span>
+                            <i class="fas fa-lightbulb" style="color: var(--step8-color);"></i>
+                            <span>Refleksi Pembelajaran</span>
+                        </div>
+                        <span class="status-badge empty"><i class="fas fa-lock"></i> Terkunci</span>
+                    </div>
+                    <div class="alert alert-warning premium-alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Selesaikan tahap 7 (Penilaian & Evaluasi) terlebih dahulu.
                     </div>
                 <?php endif; ?>
             </div>
@@ -1712,7 +2043,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Data Project Kelompok</h5>
               </div>
               <div class="modal-body">
@@ -1725,7 +2056,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="title_project" class="form-label">Nama Proyek</label>
                         <input type="text" id="title_project" name="title_project" 
                             class="form-control rounded-2 px-3 py-2" 
-                            style="color:#000000;" 
+                            style="color:#333333;" 
                             placeholder="Tambah Judul Proyek" required>
                     </div>
 
@@ -1735,7 +2066,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <textarea id="description_project" name="description_project" 
                             class="form-control shadow-sm rounded-lg p-3" 
                             placeholder="Tambahkan Deskripsi Proyek" 
-                            style="color:#000000; border: 1px solid #000000;" 
+                            style="color:#333333; border: 1px solid #000000;" 
                             rows="4" required></textarea>
                     </div>
 
@@ -1744,12 +2075,12 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="file_project" class="form-label">File Proyek</label>
                         <input type="file" id="file_project" name="file_project" 
                             class="form-control rounded-2 px-3 py-2" 
-                            style="color:#000000;">
+                            style="color:#333333;">
                     </div>
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanProject" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#000000">Simpan</button>
+                  <button id="btnSimpanProject" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -1759,7 +2090,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalLihatFoto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: var(--custom-green); color:#000000">
+                <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                     <h5 class="modal-title" id="exampleModalLabel">Logo E Learning</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -1776,7 +2107,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep5" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep5Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep5Label">Pengumpulan Proyek</h5>
               </div>
               <div class="modal-body">
@@ -1824,7 +2155,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep5" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                  <button id="btnSimpanStep5" type="button" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                       <i class="fas fa-save"></i> Simpan
                   </button>
                   <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
@@ -1932,7 +2263,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep6" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep6Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep6Label">Presentasi Proyek</h5>
               </div>
               <div class="modal-body">
@@ -1979,7 +2310,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep6" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                  <button id="btnSimpanStep6" type="button" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                       <i class="fas fa-save"></i> Simpan
                   </button>
                   <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
@@ -2091,7 +2422,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep7" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep7Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep7Label">Upload Revisi Proyek</h5>
               </div>
               <div class="modal-body">
@@ -2127,7 +2458,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep7" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                  <button id="btnSimpanStep7" type="button" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                       <i class="fas fa-save"></i> Kirim Revisi
                   </button>
                   <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
@@ -2200,7 +2531,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep8" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep8Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep8Label"><i class="fas fa-lightbulb"></i> Refleksi Pembelajaran</h5>
               </div>
               <div class="modal-body">
@@ -2249,7 +2580,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep8" type="button" class="btn rounded-pill px-4" style="background-color: var(--custom-green); color:#ffffff">
+                  <button id="btnSimpanStep8" type="button" class="btn rounded-pill px-4" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                       <i class="fas fa-paper-plane"></i> Kirim Refleksi
                   </button>
                   <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
@@ -2343,7 +2674,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep2" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep2Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep2Label">Tambah Jadwal Proyek</h5>
               </div>
               <div class="modal-body">
@@ -2365,7 +2696,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         
                         <!-- Add button -->
-                        <button type="button" id="btn-add-schedule-add" class="btn btn-outline-success btn-sm">
+                        <button type="button" id="btn-add-schedule-add" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-plus"></i> Tambah Kegiatan
                         </button>
                     </div>
@@ -2373,7 +2704,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep2" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnSimpanStep2" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -2542,7 +2873,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalEditProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Data Project Kelompok</h5>
               </div>
               <div class="modal-body">
@@ -2556,7 +2887,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="title_project" class="form-label">Nama Proyek</label>
                         <input type="text" id="title_project" name="title_project" 
                             class="form-control rounded-2 px-3 py-2" 
-                            style="color:#000000;" 
+                            style="color:#333333;" 
                             placeholder="Tambah Judul Proyek" 
                             value="<?php echo $project_data->title_project; ?>" required>
                     </div>
@@ -2567,7 +2898,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <textarea id="description_project" name="description_project" 
                             class="form-control shadow-sm rounded-lg p-3" 
                             placeholder="Tambahkan Deskripsi Proyek" 
-                            style="color:#000000; border: 1px solid #000000;" 
+                            style="color:#333333; border: 1px solid #000000;" 
                             rows="4" required><?php echo htmlspecialchars($project_data->description_project); ?>
                         </textarea>
 
@@ -2578,12 +2909,12 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <label for="file_project" class="form-label">File Proyek</label>
                         <input type="file" id="file_project" name="file_project" 
                             class="form-control rounded-2 px-3 py-2" 
-                            style="color:#000000;">
+                            style="color:#333333;">
                     </div>
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdateProject" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Update</button>
+                  <button id="btnUpdateProject" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Update</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -2593,7 +2924,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahKegiatan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+                <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                     <h5 class="modal-title" id="exampleModalLabel">Kegiatan</h5>
                 </div>
                 <div class="modal-body">
@@ -2606,7 +2937,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="nama_kegiatan" class="form-label">Nama Kegiatan</label>
                             <input type="text" id="nama_kegiatan" name="nama_kegiatan" 
                                 class="form-control rounded-2 px-3 py-2" 
-                                style="color:#000000;" 
+                                style="color:#333333;" 
                                 placeholder="Tambah Kegiatan" required>
                         </div>
 
@@ -2615,7 +2946,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="uraian_kegiatan" class="form-label">Uraian Kegiatan</label>
                             <textarea id="uraian_kegiatan" name="uraian_kegiatan" 
                                 class="form-control shadow-sm rounded-lg p-3" 
-                                style="color:#000000; border: 1px solid #000000;" 
+                                style="color:#333333; border: 1px solid #000000;" 
                                 placeholder="Masukkan Uraian Kegiatan" rows="4" required></textarea>
                         </div>
 
@@ -2624,7 +2955,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="tanggal_kegiatan" class="form-label">Tanggal Kegiatan</label>
                             <input type="date" id="tanggal_kegiatan" name="tanggal_kegiatan" 
                                 class="form-control rounded-2 px-3 py-2" 
-                                style="color:#000000;" required>
+                                style="color:#333333;" required>
                         </div>
 
                         <!-- Bukti Kegiatan -->
@@ -2632,12 +2963,12 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <label for="bukti_kegiatan" class="form-label">Bukti Kegiatan</label>
                             <input type="file" id="bukti_kegiatan" name="bukti_kegiatan" 
                                 class="form-control rounded-2 px-3 py-2" 
-                                style="color:#000000;" accept=".jpg, .jpeg, .png, .gif" required>
+                                style="color:#333333;" accept=".jpg, .jpeg, .png, .gif" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnSimpanActivity" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                    <button id="btnSimpanActivity" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                     <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -2647,7 +2978,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Tambah Jawaban Tahap 6</h5>
               </div>
               <div class="modal-body">
@@ -2661,13 +2992,13 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <textarea id="evaluation" name="evaluation" 
                             class="form-control shadow-sm rounded-lg p-3" 
                             placeholder="Tambahkan evaluasi" 
-                            style="color:#000000; border: 1px solid #000000;" 
+                            style="color:#333333; border: 1px solid #000000;" 
                             rows="4" required></textarea>
                     </div>
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep6" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnSimpanStep6" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -2679,7 +3010,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Tambah Rumusan Masalah</h5>
               </div>
               <div class="modal-body">
@@ -2693,7 +3024,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <textarea id="step1_formulation_add" name="step1_formulation" 
                             class="form-control shadow-sm rounded-lg p-3" 
                             placeholder="Tambahkan Rumusan Masalah" 
-                            style="color:#000000; border: 1px solid #000000;" 
+                            style="color:#333333; border: 1px solid #000000;" 
                             rows="4" required></textarea>
                     </div>
 
@@ -2703,7 +3034,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         <textarea id="problem_definition_add" name="problem_definition" 
                             class="form-control shadow-sm rounded-lg p-3" 
                             placeholder="Jelaskan orientasi dan latar belakang masalah" 
-                            style="color:#000000; border: 1px solid #000000;" 
+                            style="color:#333333; border: 1px solid #000000;" 
                             rows="4"></textarea>
                     </div>
 
@@ -2721,7 +3052,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         
                         <!-- Add button -->
-                        <button type="button" id="btn-add-indicator-add" class="btn btn-outline-success btn-sm">
+                        <button type="button" id="btn-add-indicator-add" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-plus"></i> Tambah Indikator Masalah
                         </button>
                     </div>
@@ -2729,7 +3060,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep1" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnSimpanStep1" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -2741,9 +3072,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
         'use strict';
         
         function getRowTemplate(index) {
-            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
+            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #3b82f6 !important;">' +
                 '<div class="d-flex justify-content-between align-items-start mb-2">' +
-                    '<span class="badge bg-success row-number">Indikator #' + index + '</span>' +
+                    '<span class="badge bg-primary row-number">Indikator #' + index + '</span>' +
                     '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-indicator">' +
                         '<i class="fas fa-trash"></i> Hapus' +
                     '</button>' +
@@ -2873,7 +3204,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalEditStep1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Edit Rumusan Masalah</h5>
               </div>
               <div class="modal-body">
@@ -2889,7 +3220,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <textarea id="step1_formulation" name="step1_formulation" 
                                 class="form-control shadow-sm rounded-lg p-3" 
                                 placeholder="Tambahkan Deskripsi Proyek" 
-                                style="color:#000000; border: 1px solid #000000;" 
+                                style="color:#333333; border: 1px solid #000000;" 
                                 rows="4" required><?php echo isset($step->step1_formulation) ? $step->step1_formulation : ''; ?></textarea>
                         </div>
 
@@ -2899,7 +3230,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <textarea id="problem_definition" name="problem_definition" 
                                 class="form-control shadow-sm rounded-lg p-3" 
                                 placeholder="Jelaskan orientasi dan latar belakang masalah" 
-                                style="color:#000000; border: 1px solid #000000;" 
+                                style="color:#333333; border: 1px solid #000000;" 
                                 rows="4"><?php echo isset($step->problem_definition) ? $step->problem_definition : ''; ?></textarea>
                         </div>
 
@@ -2917,7 +3248,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             </div>
                             
                             <!-- Add button - class must be .btn-add-indicator -->
-                            <button type="button" class="btn btn-outline-success btn-sm btn-add-indicator">
+                            <button type="button" class="btn btn-outline-primary btn-sm btn-add-indicator">
                                 <i class="fas fa-plus"></i> Tambah Indikator Masalah
                             </button>
                         </div>
@@ -2927,7 +3258,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdatedStep1" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnUpdatedStep1" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -2939,9 +3270,9 @@ $results2 = $DB->get_records_sql($query2, $params2);
         'use strict';
         
         function getEditRowTemplate(index) {
-            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #28a745 !important;">' +
+            return '<div class="indicator-row card mb-2 p-3 bg-white border" style="border-left: 4px solid #3b82f6 !important;">' +
                 '<div class="d-flex justify-content-between align-items-start mb-2">' +
-                    '<span class="badge bg-success row-number">Indikator #' + index + '</span>' +
+                    '<span class="badge bg-primary row-number">Indikator #' + index + '</span>' +
                     '<button type="button" class="btn btn-sm btn-outline-danger btn-remove-indicator-edit">' +
                         '<i class="fas fa-trash"></i> Hapus' +
                     '</button>' +
@@ -3103,7 +3434,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalEditStep2" tabindex="-1" role="dialog" aria-labelledby="modalEditStep2Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalEditStep2Label">Edit Jadwal Proyek</h5>
               </div>
               <div class="modal-body">
@@ -3126,7 +3457,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                         </div>
                         
                         <!-- Add button - class must match JS -->
-                        <button type="button" class="btn btn-outline-success btn-sm btn-add-schedule-edit">
+                        <button type="button" class="btn btn-outline-primary btn-sm btn-add-schedule-edit">
                             <i class="fas fa-plus"></i> Tambah Kegiatan
                         </button>
                     </div>
@@ -3135,7 +3466,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdatedStep2" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnUpdatedStep2" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -3343,7 +3674,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalTambahStep3" tabindex="-1" role="dialog" aria-labelledby="modalTambahStep3Label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="modalTambahStep3Label">Tambah Catatan Logbook</h5>
               </div>
               <div class="modal-body">
@@ -3382,7 +3713,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 </form>
               </div>
               <div class="modal-footer">
-                  <button id="btnSimpanStep3" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnSimpanStep3" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -3505,7 +3836,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalEditStep6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Edit Evaluasi</h5>
               </div>
               <div class="modal-body">
@@ -3520,7 +3851,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             <textarea id="evaluation" name="evaluation" 
                                 class="form-control shadow-sm rounded-lg p-3" 
                                 placeholder="Tambahkan evaluasi" 
-                                style="color:#000000; border: 1px solid #000000;" 
+                                style="color:#333333; border: 1px solid #000000;" 
                                 rows="4" required><?php echo $project_data->evaluation; ?></textarea>
                         </div>
                     </form>
@@ -3528,7 +3859,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 
               </div>
               <div class="modal-footer">
-                  <button id="btnUpdatedStep6" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">Simpan</button>
+                  <button id="btnUpdatedStep6" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">Simpan</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
@@ -3538,7 +3869,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
     <div class="modal fade" id="modalLihatKelompok" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
-              <div class="modal-header" style="background-color: var(--custom-green); color:#ffffff">
+              <div class="modal-header" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">
                   <h5 class="modal-title" id="exampleModalLabel">Pilih Kelompok Untuk Dilihat</h5>
               </div>
               <div class="modal-body">
@@ -3552,7 +3883,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                             
                             <select id="lihat_kelompok" name="lihat_kelompok" 
                                     class="form-select rounded-2 px-3 py-2 mt-2" 
-                                    style="color:#000000;" required>
+                                    style="color:#333333;" required>
                                 <option value="">Pilih No Kelompok</option>
                                 <?php
                                 foreach ($filtered_records as $record) {
@@ -3566,7 +3897,7 @@ $results2 = $DB->get_records_sql($query2, $params2);
                 
               </div>
               <div class="modal-footer">
-                  <button id="btnSubmitLihat" type="button" class="btn rounded-pill w-25" style="background-color: var(--custom-green); color:#ffffff">lihat</button>
+                  <button id="btnSubmitLihat" type="button" class="btn rounded-pill w-25" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color:#ffffff">lihat</button>
                   <button type="button" class="btn btn-secondary rounded-pill w-25" data-bs-dismiss="modal">Tutup</button>
               </div>
           </div>
