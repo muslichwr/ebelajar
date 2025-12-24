@@ -91,7 +91,7 @@ function xmldb_ebelajar_upgrade($oldversion) {
         $table = new xmldb_table('project');
         
         // Define field presentation_data to be added to project
-        $field = new xmldb_field('presentation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'product_data');
+        $field = new xmldb_field('presentation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, null);
         
         // Conditionally add field presentation_data
         if (!$dbman->field_exists($table, $field)) {
@@ -109,7 +109,7 @@ function xmldb_ebelajar_upgrade($oldversion) {
         $table = new xmldb_table('project');
         
         // Define field evaluation_data to be added to project
-        $field = new xmldb_field('evaluation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'presentation_data');
+        $field = new xmldb_field('evaluation_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, null);
         
         // Conditionally add field evaluation_data
         if (!$dbman->field_exists($table, $field)) {
@@ -117,7 +117,7 @@ function xmldb_ebelajar_upgrade($oldversion) {
         }
 
         // Define field status_step7 to be added to project
-        $field = new xmldb_field('status_step7', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', 'status_step6');
+        $field = new xmldb_field('status_step7', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', null);
         
         // Conditionally add field status_step7
         if (!$dbman->field_exists($table, $field)) {
@@ -135,7 +135,7 @@ function xmldb_ebelajar_upgrade($oldversion) {
         $table = new xmldb_table('project');
         
         // Define field reflection_data to be added to project
-        $field = new xmldb_field('reflection_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, 'evaluation_data');
+        $field = new xmldb_field('reflection_data', XMLDB_TYPE_TEXT, 'long', null, null, null, null, null);
         
         // Conditionally add field reflection_data
         if (!$dbman->field_exists($table, $field)) {
@@ -143,7 +143,7 @@ function xmldb_ebelajar_upgrade($oldversion) {
         }
 
         // Define field status_step8 to be added to project
-        $field = new xmldb_field('status_step8', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', 'status_step7');
+        $field = new xmldb_field('status_step8', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, 'Belum Selesai', null);
         
         // Conditionally add field status_step8
         if (!$dbman->field_exists($table, $field)) {
